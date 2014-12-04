@@ -453,7 +453,8 @@ class LiteratureForm(WebDepositForm):
     nonpublic_note = fields.TextAreaField(
         label=_('Proceedings'),
         description='Editors, title of proceedings, publisher, year of publication, page range, URL',
-        widget=wrap_nonpublic_note
+        widget=wrap_nonpublic_note,
+        widget_classes="form-control" + ARTICLE_CLASS
     )
 
     note = fields.TextAreaField(
