@@ -475,7 +475,9 @@ define(function(require, exports, module) {
           .children('.panel-body')
           .children('.form-group:visible')
           .length === 0) {
-          $(field_name).slideUp();
+            if ($(field_name).children('.panel-collapse').hasClass("in")) {
+              $(field_name).slideUp();
+            }
         }
       });
     },
