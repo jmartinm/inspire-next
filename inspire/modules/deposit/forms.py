@@ -491,6 +491,7 @@ class LiteratureForm(WebDepositForm):
     file_field = fields.FileUploadField(
         label="",
         widget=plupload_widget,
+        widget_classes="form-control" + THESIS_CLASS,
         export_key=False
     )
 
