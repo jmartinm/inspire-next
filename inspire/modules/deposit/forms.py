@@ -536,7 +536,7 @@ class LiteratureForm(WebDepositForm):
     #
     # Form Configuration
     #
-    _title = _("Literature submission")
+    _title = _("Suggest a publication")
 
     # Group fields in categories
 
@@ -556,7 +556,7 @@ class LiteratureForm(WebDepositForm):
             ['supervisors', 'defense_date', 'thesis_date', 'degree_type',
              'institution']),
         ('Licenses and copyright',
-            ['license', 'license_url']),
+            ['license', 'license_url'], {'classes': 'collapse'}),
         ('Journal Information',
             ['journal_title', 'volume', 'issue', 'year',
              'page_range_article_id']),
