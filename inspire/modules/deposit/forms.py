@@ -508,7 +508,7 @@ class LiteratureForm(WebDepositForm):
 
     url = fields.TextField(
         label=_('Link to Source'),
-        description = _('If available, please provide us with an accessible URL for the pdf'),
+        description = _('If available, please provide us with an accessible URL for the PDF'),
         placeholder='http://www.example.com/document.pdf',
         widget_classes="form-control",
     )
