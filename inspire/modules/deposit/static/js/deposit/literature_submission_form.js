@@ -265,6 +265,11 @@ define(function(require, exports, module) {
           this.$conferenceInfoField.hide();
         }
       }.bind(this));
+
+      $(document).on('click', '.panel div.clickable', function (e) {
+        var $this = $(this);
+        $this.siblings('.panel-collapse').collapse("toggle");
+      });
     },
 
     addConferenceInfoField: function() {

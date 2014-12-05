@@ -140,3 +140,8 @@
     }
 
 }
+
+.clickable
+{
+    cursor: pointer;
+}
