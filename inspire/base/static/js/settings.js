@@ -39,11 +39,13 @@ require.config({
     "jquery-jeditable": "vendors/jquery.jeditable/index",
     "moment": "vendors/moment/moment",
     "datatables": "vendors/datatables/media/js/jquery.dataTables",
+    "datatables-bootstrap3": "vendors/datatables-bootstrap3/BS3/assets/js/datatables",
     "datatables-plugins": "vendors/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap",
     "datatables-tabletools": "vendors/datatables-tabletools/js/dataTables.tableTools",
     "bootstrap-datetimepicker": "vendors/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
     "bootstrap-tagsinput": "vendors/bootstrap-tagsinput/src/bootstrap-tagsinput",
     bootstrap: "vendors/bootstrap/dist/js/bootstrap",
+    "bootstrap-switch": "vendors/bootstrap-switch/dist/js/bootstrap-switch",
     prism: "vendors/prism/prism",
     d3: "vendors/d3/d3.js",
     "jasmine-jquery": "vendors/jasmine-jquery/lib/jasmine-jquery",
@@ -55,6 +57,12 @@ require.config({
     "searchtypeahead-configuration": "js/search/default_typeahead_configuration",
     "jasmine-events": "js/jasmine/events_checker",
     "jasmine-initialization": "js/jasmine/initialization_checker",
+    "jquery.flot": "vendors/flot/jquery.flot",
+    "jquery.flot.axislabels": "vendors/flot-axislabels/jquery.flot.axislabels",
+    "jquery.flot.tooltip": "vendors/flot.tooltip/js/jquery.flot.tooltip",
+    "jquery.flot.orderbars": "vendors/flot.orderbars/js/jquery.flot.orderBars",
+    "jquery.flot.navigate": "vendors/flot/jquery.flot.navigate",
+    "growraf": "vendors/growraf/jquery.flot.growraf",
     // INSPIRE
     "bootstrap-multiselect": "vendors/bootstrap-multiselect/dist/js/bootstrap-multiselect",
     "readmore": "vendors/readmore/readmore",
@@ -105,12 +113,12 @@ require.config({
       deps: ["jquery"],
       exports: "$.fn.tagsinput"
     },
+    bootstrap: {
+      deps: ["jquery"]
+    },
     "datatables": {
       deps: ["jquery"],
       exports: "$.fn.dataTable"
-    },
-    bootstrap: {
-      deps: ["jquery"]
     },
     "datatables-plugins": {
       deps: ["jquery", "bootstrap", "datatables"]
@@ -122,6 +130,9 @@ require.config({
     "bootstrap-datetimepicker": {
       deps: ["jquery", "bootstrap", "moment"],
       exports: "$.fn.datetimepicker"
+    },
+    "bootstrap-switch": {
+      deps: ["jquery", "bootstrap"],
     },
     prism: {
       exports: "Prism"
@@ -158,6 +169,25 @@ require.config({
     },
     "jasmine-initialization": {
       deps: ["jasmine-boot"],
+    },
+    "jquery.flot": {
+      deps: ["jquery"],
+      exports: '$.plot'
+    },
+    "jquery.flot.axislabels": {
+      deps: ["jquery.flot"]
+    },
+    "jquery.flot.tooltip": {
+      deps: ["jquery.flot", "jquery.flot.axislabels"]
+    },
+    "jquery.flot.navigate": {
+      deps: ["jquery.flot"]
+    },
+    "jquery.flot.orderbars": {
+      deps: ["jquery.flot"]
+    },
+    "growraf": {
+      deps: ["jquery.flot"]
     },
     // INSPIRE
     "bootstrap-multiselect": {

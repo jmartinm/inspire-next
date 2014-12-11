@@ -77,12 +77,12 @@ PACKAGES = [
     'inspire.modules.workflows',
     'inspire.modules.deposit',
     'inspire.modules.access',
-    'inspire.modules.harvester',
+    'inspire.modules.authors',
     'invenio.modules.access',
     'invenio.modules.accounts',
     'invenio.modules.alerts',
     'invenio.modules.apikeys',
-    'invenio.modules.authorids',
+    'invenio.modules.authors',
     'invenio.modules.authorprofiles',
     'invenio.modules.baskets',
     'invenio.modules.bulletin',
@@ -242,6 +242,27 @@ ARXIV_SEARCH_PREFIX = u"035__a:oai:arXiv.org:"
 # or Invenio will crash when using http
 
 REMEMBER_COOKIE_SECURE = True
+
+# Authors module configuration
+
+AUTHORS_IDENTIFIERS_TYPES = ['arxiv', 'personid', 'orcid']
+
+AUTHORS_PROFILE_PAGE_CONFIG = {
+
+    'email_names': ('Email'),
+    'url_names': ('Link', 'Url'),
+
+    'additional_boxes':
+        (('Co-authors', 'box_co_authors.html'),
+         ('Keywords', 'box_keywords.html')),
+
+    # in the form name, plural name, path in the record
+    'main_fields':
+        (('Email', 'Emails', ('emails',)),
+         ('Field', 'Fields', ('field_categories', 'name')),
+         ('Affiliation', 'Affiliations', ('positions_list',)))
+
+}
 
 # For production only, instance_config contains configuration of
 # database credentials and other instance specific configuration
