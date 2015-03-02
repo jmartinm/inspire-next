@@ -91,3 +91,25 @@
     </div>
   </nav>
 </section>
+
+<div id="search-container" class="container-fluid">
+  <form class="navbar-form text-center" role="search" method="get" id="searchform" action="http://localhost:8080/test/">
+       <div class="input-group">
+       <div class="input-group-btn">
+       <button type="button" id="searchcategory" value="Authors" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Authors <span class="caret"></span></button>
+
+               <ul id="searchdropdown" class="dropdown-menu" role="menu">
+                 <li><a href="javascript:void(0)">Authors</a></li>
+                 <li><a href="javascript:void(0)">Publications</a></li>
+                 <li><a href="javascript:void(0)">Data</a></li>
+          <li class="divider"></li>
+                 <li><a href="javascript:void(0)">All</a></li>
+               </ul>
+       </div>
+       <input type="text" class="form-control" value="Some, Guy" placeholder="Search..." name="s" id="s" style="width:400px">
+       <div class="input-group-btn">
+       <button type="submit" id="searchsubmit" value="Search" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
+       </div>
+       </div>
+  </form>
+</div>
