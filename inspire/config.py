@@ -252,10 +252,6 @@ AUTHORS_PROFILE_PAGE_CONFIG = {
     'email_names': ('Email'),
     'url_names': ('Link', 'Url'),
 
-    'additional_boxes':
-        (('Co-authors', 'box_co_authors.html'),
-         ('Keywords', 'box_keywords.html')),
-
     # in the form name, plural name, path in the record
     'main_fields':
         (('Email', 'Emails', ('emails',)),
