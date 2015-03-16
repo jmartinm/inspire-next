@@ -1,0 +1,37 @@
+{#
+### This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+
+{%- import "accounts/settings/helpers.html" as helpers with context %}
+{%- extends "accounts/settings/index.html" -%}
+
+
+{% block settings_body %}
+{{helpers.panel_start('Profile', icon='fa fa-user fa-fw')}}
+<div class="row">
+    <div class="col-sm-2 col-md-2 text-center"><i class="fa fa-user fa-5x"></i></div>
+    {%- if current_user.given_names or current_user.family_name %}
+      <div class="col-sm-4 col-md-4"><h4 class="media-heading">{{ current_user.given_names ~ " " ~ current_user.family_name}}</h4>
+    {%- else %}
+      <div class="col-sm-4 col-md-4"><h4 class="media-heading">{{ current_user.nickname}}</h4>
+	{%- endif %}
+    <p class="text-muted">{{current_user.email}}</p></div>
+</div>
+{{helpers.panel_end()}}
+{% endblock %}
