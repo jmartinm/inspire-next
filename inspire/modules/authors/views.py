@@ -62,4 +62,4 @@ def update(author_id):
         # background using, for example, Celery.
         myobj.start_workflow("demoworkflow", delayed=True)
         return render_template('forms/form_demo_success.html', form=form)
-    return render_template('forms/form_demo.html', form=form, **ctx)
+    return render_template('authors/update_form.html', form=form, **ctx)

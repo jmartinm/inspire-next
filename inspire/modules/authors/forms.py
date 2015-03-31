@@ -221,7 +221,6 @@ class AuthorUpdateForm(InspireForm):
             item_widget=ItemWidget(),
             html_tag='div',
         ),
-        export_key='phd_advisor',
     )
 
     second_phd_advisor = fields.FormField(

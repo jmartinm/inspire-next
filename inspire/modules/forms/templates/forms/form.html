@@ -20,7 +20,7 @@
 
 {% block global_bundles %}
   {{ super() }}
-  {% bundles "form.css" %}
+  {% bundles "form.css", "deposit.js", "deposit.css" %}
 {% endblock %}
 
 {% macro form_action_bar(margin="") -%}
