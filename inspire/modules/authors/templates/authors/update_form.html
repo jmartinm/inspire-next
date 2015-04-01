@@ -35,11 +35,25 @@ require(
 
     var config = {
       form: {
+        save_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid) }}',
+        save_all_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, all='1') }}',
+        complete_url: '{{ url_for(".save", deposition_type=deposition_type, uuid=uuid, submit='1') }}',
+        autocomplete_url: '{{ url_for(".autocomplete", deposition_type=deposition_type, uuid=uuid, field_name="__FIELDNAME__") }}',
         datepicker_element: '.datepicker',
         datepicker_options: {
             format: "YYYY-MM-DD",
             pickTime: false
-        }
+        },
+        // Selectors
+        datepickerSelector: '.datepicker',
+        formSelector: '#authorUpdateForm',
+        formDialogSelector: '#form-submit-dialog',
+
+        // Classes
+        formSaveClass: '.form-save',
+        formSubmitClass: '.form-submit',
+        dynamicFieldListClass : ".dynamic-field-list",
+        uploaderSelector: "#uploader"
       }
     };
 

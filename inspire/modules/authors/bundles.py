@@ -1,4 +1,4 @@
-{#
+#
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
 ##
@@ -15,13 +15,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#}
+#
 
-<div class="well action-bar hide-element"{% if margin %}style="margin-top: {{margin}}"{% endif %}>
-  <span class="pull-right">
-    <span class="loader hide"><img src="{{ url_for('static', filename='img/loading.gif' ) }}" /></span>
-    <span class="status-indicator text-muted"></span>&nbsp;
-    <button title="{{_('Press Submit to finalize your upload.')}}" class="btn btn-success form-submit"><i class="fa fa-check-circle fa-lg"></i> {{ _('Submit') }}</button>
-  </span>
-  <span class="clearfix"></span>
-</div>
+"""INSPIRE Author bundles."""
+
+from invenio.base.bundles import invenio as _i, jquery as _j
+from invenio.ext.assets import Bundle, RequireJSFilter
+
+js_update_form = Bundle(
+    "js/authors/authors-update-form-init.js",
+    output="authors-update-form.js",
+    filters=RequireJSFilter(exclude=[_j, _i]),
+    weight=51,
+)
+
+# styles = Bundle(
+#     "css/deposit/form.css",
+#     "vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css",
+#     output="authors-update-form.css",
+#     filters="less,cleancss",
+#     weight=51
+# )
