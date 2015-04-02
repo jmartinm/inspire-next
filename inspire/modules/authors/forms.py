@@ -26,7 +26,7 @@ from invenio.modules.deposit.field_widgets import ColumnInput, \
                                                   ItemWidget
 
 from inspire.modules.forms.form import InspireForm
-from inspire.modules.forms import fields
+from invenio.modules.deposit import fields
 from inspire.modules.deposit.filters import clean_empty_list
 from inspire.modules.deposit.forms import AuthorInlineForm
 
@@ -214,23 +214,18 @@ class AuthorUpdateForm(InspireForm):
         #validators=[InstitutionValidation],
     )
 
-    phd_advisor = fields.FormField(
-        AuthorInlineForm,
-        label=_('Ph.D. Advisor'),
-        widget=ExtendedListWidget(
-            item_widget=ItemWidget(),
-            html_tag='div',
+    phd_advisors = fields.DynamicFieldList(
+        fields.FormField(
+            AuthorInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
         ),
-    )
-
-    second_phd_advisor = fields.FormField(
-        AuthorInlineForm,
-        label=_('2nd Ph.D. Advisor'),
-        widget=ExtendedListWidget(
-            item_widget=ItemWidget(),
-            html_tag='div',
-        ),
-        export_key='second_phd_advisor',
+        label='Ph.D. Advisors',
+        add_label='Add another Ph.D. advisor',
+        min_entries=1,
+        widget_classes='',
     )
 
     # experiments = fields.SelectMultipleField(
@@ -261,6 +256,6 @@ class AuthorUpdateForm(InspireForm):
             ['full_name', 'display_name', 'email', 'public_email', 'orcid',
              'status', 'webpage', 'blog_url', 'twitter_username']),
         ('Work',
-            ['research_field', 'institution_history', 'phd_advisor',
-             'second_phd_advisor', 'experiments', 'comments']),
+            ['research_field', 'institution_history', 'phd_advisors',
+             'experiments', 'comments']),
     ]

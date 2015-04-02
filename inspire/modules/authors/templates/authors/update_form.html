@@ -18,6 +18,11 @@
 #}
 {%- extends "forms/form.html" -%}
 
+{% block global_bundles %}
+  {{ super() }}
+  {% bundles "deposit.css" %}
+{% endblock %}
+
 {% block javascript %}
 <script type="text/javascript">
 require(
