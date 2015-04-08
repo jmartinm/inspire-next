@@ -39,12 +39,14 @@
 require(
   [
     "jquery",
-    "js/deposit/form"
+    "js/deposit/form",
+    "js/forms/inspire-form",
   ],
 
   function(
     $,
-    deposit_form
+    deposit_form,
+    InspireForm
   ) {
 
     $(function() {
@@ -72,6 +74,8 @@ require(
         uploaderSelector: "#uploader"
       }
     };
+    // Initialize INSPIRE form - should be the first thing
+    var form = new InspireForm();
 
     // Initialize form
     deposit_form.attachTo("#authorUpdateForm", config.form);

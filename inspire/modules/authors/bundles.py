@@ -19,15 +19,7 @@
 
 """INSPIRE Author bundles."""
 
-from invenio.base.bundles import invenio as _i, jquery as _j
-from invenio.ext.assets import Bundle, RequireJSFilter
-
-js_update_form = Bundle(
-    "js/authors/authors-update-form-init.js",
-    output="authors-update-form.js",
-    filters=RequireJSFilter(exclude=[_j, _i]),
-    weight=51,
-)
+from invenio.ext.assets import Bundle
 
 styles = Bundle(
     "less/authors/author-update-form.less",

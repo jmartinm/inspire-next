@@ -19,6 +19,14 @@
 
 from invenio.ext.assets import Bundle
 
+
+js = Bundle(
+    "js/forms/inspire-form-init.js",
+    output="inspire-form.js",
+    filters="requirejs",
+    weight=51
+)
+
 styles = Bundle(
     "less/forms/form.less",
     output="form.css",
