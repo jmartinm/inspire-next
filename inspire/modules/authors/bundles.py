@@ -29,10 +29,9 @@ js_update_form = Bundle(
     weight=51,
 )
 
-# styles = Bundle(
-#     "css/deposit/form.css",
-#     "vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css",
-#     output="authors-update-form.css",
-#     filters="less,cleancss",
-#     weight=51
-# )
+styles = Bundle(
+    "less/authors/author-update-form.less",
+    output="author-update-form.css",
+    filters="less,cleancss",
+    weight=51
+)

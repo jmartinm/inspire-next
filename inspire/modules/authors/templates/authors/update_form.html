@@ -20,8 +20,19 @@
 
 {% block global_bundles %}
   {{ super() }}
-  {% bundles "deposit.css" %}
+  {% bundles "deposit.css", "author-update-form.css" %}
 {% endblock %}
+
+{% block form_title scoped %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6 vcenter">
+      <h1>{{ form._title }}</h1>
+    </div>
+  </div>
+  <div class="well">
+  This form allows you to update author information. All modifications are transfered to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
+  </div>
+{% endblock form_title %}
 
 {% block javascript %}
 <script type="text/javascript">

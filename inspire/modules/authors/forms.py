@@ -18,12 +18,14 @@
 #
 
 from wtforms import validators
-from wtforms.widgets import html_params, HTMLString
+from wtforms.widgets import html_params, HTMLString, Select
 
 from invenio.base.i18n import _
 from invenio.modules.deposit.field_widgets import ColumnInput, \
                                                   ExtendedListWidget, \
-                                                  ItemWidget
+                                                  ItemWidget, \
+                                                  DynamicListWidget, \
+                                                  DynamicItemWidget
 
 from inspire.modules.forms.form import InspireForm
 from invenio.modules.deposit import fields
@@ -34,13 +36,65 @@ from inspire.modules.deposit.forms import AuthorInlineForm
 def date_widget(field, **kwargs):
     """Date widget."""
     field_id = kwargs.pop('id', field.id)
-    html = [u'<div class="row"><div class="col-xs-5 col-sm-3">\
+    placeholder = kwargs.pop('placeholder', "")
+    html = [u'<div class="col-md-6 col-margin-top">\
             <input class="datepicker form-control" %s type="text">\
-            </div></div>'
+            </div>'
             % (html_params(id=field_id,
                            name=field_id,
-                           value=field.data or ''))]
+                           value=field.data or '',
+                           placeholder=placeholder))]
     return HTMLString(u''.join(html))
+
+
+def currentCheckboxWidget(field, **kwargs):
+    """Current institution checkbox widget."""
+    field_id = kwargs.pop('id', field.id)
+
+    html = [u'<div class="col-md-10 col-margin-top pull-left">\
+                <input %s type="checkbox">\
+                <label for=%s>Current</label></div>'
+            % (html_params(id=field_id,
+                           name=field_id,
+                           value=field.data or ''), field_id)]
+    return HTMLString(u''.join(html))
+
+
+class WrappedSelect(Select):
+
+    """Widget to wrap select input in further markup."""
+
+    wrapper = '<div>%(field)s</div>'
+    wrapped_widget = Select()
+
+    def __init__(self, widget=None, wrapper=None, **kwargs):
+        """Initialize wrapped input with widget and wrapper."""
+        self.wrapped_widget = widget or self.wrapped_widget
+        self.wrapper_args = kwargs
+        if wrapper is not None:
+            self.wrapper = wrapper
+
+    def __call__(self, field, **kwargs):
+        """Render wrapped input."""
+        return HTMLString(self.wrapper % dict(
+            field=self.wrapped_widget(field, **kwargs),
+            **self.wrapper_args
+        ))
+
+
+class ColumnSelect(WrappedSelect):
+
+    """Specialized column wrapped input."""
+
+    @property
+    def wrapper(self):
+        """Wrapper template with description support."""
+        if 'description' in self.wrapper_args:
+            return ('<div class="%(class_)s">%(field)s'
+                    '<p class="text-muted field-desc">'
+                    '<small>%(description)s</small></p></div>')
+        return '<div class="%(class_)s">%(field)s</div>'
+
 
 
 class InstitutionInlineForm(InspireForm):
@@ -58,30 +112,47 @@ class InstitutionInlineForm(InspireForm):
 
     name = fields.TextField(
         widget_classes='form-control',
-        widget=ColumnInput(class_="col-xs-4"),
+        widget=ColumnInput(class_="col-md-6"),
         autocomplete='affiliation',
-        placeholder=_("Start typing for suggestions"),
+        placeholder=_("Institution. Start typing for suggestions"),
     )
 
     rank = fields.SelectField(
         # label='Rank',
         choices=rank_options,
         default="senior",
-        widget_classes='form-control col-xs-4 col-pad-0',
+        widget=ColumnSelect(class_="col-md-6"),
+        widget_classes='form-control',
         validators=[validators.DataRequired()],
     )
 
     start_year = fields.Date(
-        label=_('Start year'),
+        placeholder=_('Start year'),
         description='Format: YYYY.',
         widget=date_widget,
     )
 
     end_year = fields.Date(
-        label=_('End year'),
+        placeholder=_('End year'),
         description='Format: YYYY.',
         widget=date_widget,
     )
+
+    current = fields.BooleanField(
+        widget=currentCheckboxWidget
+    )
+
+
+class DynamicUnsortedItemWidget(DynamicItemWidget):
+
+    def _sort_button(self):
+        return ""
+
+class DynamicUnsortedWidget(DynamicListWidget):
+    def __init__(self, **kwargs):
+        """Initialize dynamic list widget."""
+        self.item_widget = DynamicUnsortedItemWidget()
+        super(DynamicUnsortedWidget, self).__init__(**kwargs)
 
 
 class AuthorUpdateForm(InspireForm):
@@ -205,12 +276,13 @@ class AuthorUpdateForm(InspireForm):
                 item_widget=ItemWidget(),
                 html_tag='div',
             ),
+            widget_classes="col-xs-10"
         ),
         label='Institution History',
         add_label='Add another institution',
         min_entries=1,
-        widget_classes='',
         export_key='institutions',
+        widget=DynamicUnsortedWidget()
         #validators=[InstitutionValidation],
     )
 
@@ -225,7 +297,7 @@ class AuthorUpdateForm(InspireForm):
         label='Ph.D. Advisors',
         add_label='Add another Ph.D. advisor',
         min_entries=1,
-        widget_classes='',
+        widget=DynamicUnsortedWidget()
     )
 
     # experiments = fields.SelectMultipleField(
