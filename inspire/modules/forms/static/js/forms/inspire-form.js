@@ -28,20 +28,56 @@ define(function(require, exports, module) {
   require("bootstrap-multiselect");
 
   function InspireForm(options) {
+    this.options = options;
     this.init();
+    this.connectEvents();
   }
 
   InspireForm.prototype = {
 
     /*
-     * here proper initialization
+     * Here proper initialization
      */
     init: function init() {
+      this.preventFormSubmit();
+
+      // focus on the first element of the form
+      this.$first_input_field = $('form:first *:input[type!=hidden]:first');
+      this.$first_input_field.focus();
+
+
       $('#research_field').attr('multiple', 'multiple').multiselect({
         maxHeight: 400,
         enableCaseInsensitiveFiltering: true
       });
-    }
+    },
+    /*
+     * here binding functions to events
+     */
+    connectEvents: function connectEvents() {
+      $(document).on('click', '.panel div.clickable', function (e) {
+        var $this = $(this);
+        var $toggle_element = $this.find('.panel-toggle');
+        if ( $(e.target).is($toggle_element) ) {
+          return;
+        }
+        else {
+          $toggle_element.click();
+        }
+      });
+    },
+    /**
+     * Disable form submit on ENTER
+     */
+    preventFormSubmit: function preventFormSubmit() {
+      $(this.options.formSelector).find("input").bind("keyup keypress", function(e) {
+        var code = e.keyCode || e.which;
+        if (code === 13) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    },
   }
 
   module.exports = InspireForm;

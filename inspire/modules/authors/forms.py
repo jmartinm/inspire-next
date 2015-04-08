@@ -96,12 +96,12 @@ class ColumnSelect(WrappedSelect):
         return '<div class="%(class_)s">%(field)s</div>'
 
 
-
 class InstitutionInlineForm(InspireForm):
 
     """Institution inline form."""
 
-    rank_options = [("senior", _("Senior (permanent)")),
+    rank_options = [("rank", _("Rank")),
+                    ("senior", _("Senior (permanent)")),
                     ("junior", _("Junior (leads to Senior)")),
                     ("staff", _("Staff (non-research)")),
                     ("visitor", _("Visitor")),
@@ -118,9 +118,8 @@ class InstitutionInlineForm(InspireForm):
     )
 
     rank = fields.SelectField(
-        # label='Rank',
         choices=rank_options,
-        default="senior",
+        default="rank",
         widget=ColumnSelect(class_="col-md-6"),
         widget_classes='form-control',
         validators=[validators.DataRequired()],
@@ -310,7 +309,7 @@ class AuthorUpdateForm(InspireForm):
 
     comments = fields.TextAreaField(
         label=_('Comments'),
-        description='Not displayed',
+        description='Send us any comments you might have. They will not be visible.',
         widget_classes="form-control"
     )
 
@@ -327,7 +326,9 @@ class AuthorUpdateForm(InspireForm):
         ('Personal Information',
             ['full_name', 'display_name', 'email', 'public_email', 'orcid',
              'status', 'webpage', 'blog_url', 'twitter_username']),
-        ('Work',
+        ('Career information',
             ['research_field', 'institution_history', 'phd_advisors',
-             'experiments', 'comments']),
+             'experiments']),
+        ('Comments',
+            ['comments'])
     ]

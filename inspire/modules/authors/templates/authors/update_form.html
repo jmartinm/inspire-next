@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="well">
-  This form allows you to update author information. All modifications are transfered to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
+  This form allows you to update author information. All modifications are transferred to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
   </div>
 {% endblock form_title %}
 
@@ -75,7 +75,7 @@ require(
       }
     };
     // Initialize INSPIRE form - should be the first thing
-    var form = new InspireForm();
+    var form = new InspireForm(config.form);
 
     // Initialize form
     deposit_form.attachTo("#authorUpdateForm", config.form);
