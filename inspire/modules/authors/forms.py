@@ -137,9 +137,7 @@ class InstitutionInlineForm(InspireForm):
         widget=date_widget,
     )
 
-    current = fields.BooleanField(
-        widget=currentCheckboxWidget
-    )
+    current = fields.BooleanField()
 
 
 class DynamicUnsortedItemWidget(DynamicItemWidget):

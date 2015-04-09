@@ -17,10 +17,13 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
+import requests
+
 from flask import Blueprint, render_template, url_for
 from flask_login import login_required
 
 from invenio.base.decorators import wash_arguments
+from invenio.modules.records.api import Record
 
 from .forms import AuthorUpdateForm
 
@@ -40,8 +43,24 @@ blueprint = Blueprint(
 def update(author_id):
     """View for INSPIRE author update form."""
     # from inspire.modules.forms.utils import DataExporter
+    data = {}
+    if author_id:
+        xml = requests.get("https://inspirehep.net/record/{}/export/xm".format(
+            author_id))
+        data = Record.create(xml.text.encode("utf-8"), 'marc',
+                             model='author').produce("json_for_form")
 
-    form = AuthorUpdateForm(data={"nickname": "John Doe"})
+    data["research_field"] = ["CHAO-DYN", "GR-QC"]
+    data["phd_advisors"] = [{"name":"test", "affiliation": "aff test"},
+                            {"name":"test 2", "affiliation": "aff test 2"}]
+    data["institution_history"] = [{
+        "name": "CERN",
+        "rank": "senior",
+        "start_year": "2014-01-01",
+        "end_year": "2015-01-01",
+        "current": False
+    }]
+    form = AuthorUpdateForm(data=data)
     ctx = {
         "action": url_for('.update'),
         "name": "authorUpdateForm",
