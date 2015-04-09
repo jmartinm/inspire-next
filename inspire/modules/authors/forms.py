@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
@@ -42,7 +43,7 @@ def date_widget(field, **kwargs):
             </div>'
             % (html_params(id=field_id,
                            name=field_id,
-                           value=field.data or '',
+                           value=field.object_data or '',
                            placeholder=placeholder))]
     return HTMLString(u''.join(html))
 
@@ -50,13 +51,13 @@ def date_widget(field, **kwargs):
 def currentCheckboxWidget(field, **kwargs):
     """Current institution checkbox widget."""
     field_id = kwargs.pop('id', field.id)
-
     html = [u'<div class="col-md-10 col-margin-top pull-left">\
-                <input %s type="checkbox">\
+                <input %s %s type="checkbox">\
                 <label for=%s>Current</label></div>'
             % (html_params(id=field_id,
-                           name=field_id,
-                           value=field.data or ''), field_id)]
+                           name=field_id),
+               field.data and "checked" or "",
+               field_id)]
     return HTMLString(u''.join(html))
 
 
@@ -107,7 +108,7 @@ class InstitutionInlineForm(InspireForm):
                     ("visitor", _("Visitor")),
                     ("postdoc", _("PostDoc")),
                     ("phd", _("PhD")),
-                    ("masters", _("Masters")),
+                    ("masters", _("Master")),
                     ("undergrad", _("Undergrad"))]
 
     name = fields.TextField(
@@ -137,7 +138,9 @@ class InstitutionInlineForm(InspireForm):
         widget=date_widget,
     )
 
-    current = fields.BooleanField()
+    current = fields.BooleanField(
+        widget=currentCheckboxWidget
+    )
 
 
 class DynamicUnsortedItemWidget(DynamicItemWidget):
@@ -166,22 +169,28 @@ class AuthorUpdateForm(InspireForm):
     display_name = fields.TextField(
         label=_('Display name'),
         description='e.g. Lampen, John',
-        validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
 
-    email = fields.TextField(
-        label=_('Your Email'),
-        description=_('Not displayed, contact only'),
-        widget_classes="form-control",
-        validators=[
-            validators.DataRequired(),
-            validators.Email()
-        ],
+    native_name = fields.TextField(
+        label=_('Native name'),
+        description=u'e.g. 麦迪娜',
+        widget_classes="form-control"
     )
+
+    # email = fields.TextField(
+    #     label=_('Your Email'),
+    #     description=_('Not displayed, contact only'),
+    #     widget_classes="form-control",
+    #     validators=[
+    #         validators.DataRequired(),
+    #         validators.Email()
+    #     ],
+    # )
 
     public_email = fields.TextField(
         label=_('Email (public)'),
+        description="This email will be displayed in your public profile.",
         widget_classes="form-control",
         validators=[validators.Email()],
     )
@@ -192,7 +201,8 @@ class AuthorUpdateForm(InspireForm):
         #validators=[validators.ORCIDValidator()],
     )
 
-    status_options = [("active", _("Active")),
+    status_options = [("", ""),
+                      ("active", _("Active")),
                       ("retired", _("Retired")),
                       ("departed", _("Departed")),
                       ("deceased", _("Deceased"))]
@@ -200,15 +210,13 @@ class AuthorUpdateForm(InspireForm):
     status = fields.SelectField(
         label='Status',
         choices=status_options,
-        default="active",
+        default="",
         widget_classes='form-control',
-        validators=[validators.DataRequired()],
     )
 
     webpage = fields.TextField(
         label=_('Your webpage'),
         placeholder='http://www.example.com',
-        export_key='webpage',
         widget_classes="form-control",
         validators=[validators.URL(), validators.Optional],
     )
@@ -216,7 +224,6 @@ class AuthorUpdateForm(InspireForm):
     blog_url = fields.TextField(
         label=_('Your blog'),
         placeholder='http://www.example.com',
-        export_key='blog',
         widget_classes="form-control",
         validators=[validators.URL(), validators.Optional],
     )
@@ -224,44 +231,42 @@ class AuthorUpdateForm(InspireForm):
     twitter_username = fields.TextField(
         label=_('Twitter'),
         placeholder='e.g. @inspirehep',
-        export_key='twitter',
         widget_classes="form-control",
         validators=[validators.URL(), validators.Optional],
     )
 
-    research_field_options = [("ACC-PHYS", _("acc-phys")),
-                              ("ASTRO-PH", _("astro-ph")),
-                              ("ATOM-PH", _("atom-ph")),
-                              ("CHAO-DYN", _("chao-dyn")),
-                              ("CLIMATE", _("climate")),
-                              ("COMP", _("comp")),
-                              ("COND-MAT", _("cond-mat")),
-                              ("GENL-TH", _("genl-th")),
-                              ("GR-QC", _("gr-qc")),
-                              ("HEP-EX", _("hep-ex")),
-                              ("HEP-LAT", _("hep-lat")),
-                              ("HEP-PH", _("hep-ph")),
-                              ("HEP-TH", _("hep-th")),
-                              ("INSTR", _("instr")),
-                              ("LIBRARIAN", _("librarian")),
-                              ("MATH", _("math")),
-                              ("MATH-PH", _("math-ph")),
-                              ("MED-PHYS", _("med-phys")),
-                              ("NLIN", _("nlin")),
-                              ("NUCL-EX", _("nucl-ex")),
-                              ("NUCL-TH", _("nucl-th")),
-                              ("PHYSICS", _("physics")),
-                              ("PLASMA-PHYS", _("plasma-phys")),
-                              ("Q-BIO", _("q-bio")),
-                              ("QUANT-PH", _("quant-ph")),
-                              ("SSRL", _("ssrl")),
-                              ("OTHER", _("other"))]
+    research_field_options = [("acc-phys", _("acc-phys")),
+                              ("astro-ph", _("astro-ph")),
+                              ("atom-ph", _("atom-ph")),
+                              ("chao-dyn", _("chao-dyn")),
+                              ("climate", _("climate")),
+                              ("comp", _("comp")),
+                              ("cond-mat", _("cond-mat")),
+                              ("genl-th", _("genl-th")),
+                              ("gr-qc", _("gr-qc")),
+                              ("hep-ex", _("hep-ex")),
+                              ("hep-lat", _("hep-lat")),
+                              ("hep-ph", _("hep-ph")),
+                              ("hep-th", _("hep-th")),
+                              ("instr", _("instr")),
+                              ("librarian", _("librarian")),
+                              ("math", _("math")),
+                              ("math-ph", _("math-ph")),
+                              ("med-phys", _("med-phys")),
+                              ("nlin", _("nlin")),
+                              ("nucl-ex", _("nucl-ex")),
+                              ("nucl-th", _("nucl-th")),
+                              ("physics", _("physics")),
+                              ("plasma-phys", _("plasma-phys")),
+                              ("q-bio", _("q-bio")),
+                              ("quant-ph", _("quant-ph")),
+                              ("ssrl", _("ssrl")),
+                              ("other", _("other"))]
 
     research_field = fields.SelectMultipleField(
         label=_('Field of research'),
         choices=research_field_options,
         widget_classes="form-control",
-        export_key='research_field',
         filters=[clean_empty_list],
         validators=[validators.DataRequired()]
     )
@@ -278,7 +283,6 @@ class AuthorUpdateForm(InspireForm):
         label='Institution History',
         add_label='Add another institution',
         min_entries=1,
-        export_key='institutions',
         widget=DynamicUnsortedWidget()
         #validators=[InstitutionValidation],
     )
@@ -322,8 +326,9 @@ class AuthorUpdateForm(InspireForm):
 
     groups = [
         ('Personal Information',
-            ['full_name', 'display_name', 'email', 'public_email', 'orcid',
-             'status', 'webpage', 'blog_url', 'twitter_username']),
+            ['full_name', 'display_name', 'native_name', 'email',
+             'public_email', 'orcid', 'status', 'webpage', 'blog_url',
+             'twitter_username']),
         ('Career information',
             ['research_field', 'institution_history', 'phd_advisors',
              'experiments']),

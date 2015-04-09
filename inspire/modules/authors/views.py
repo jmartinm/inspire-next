@@ -37,6 +37,41 @@ blueprint = Blueprint(
 )
 
 
+def convert_for_form(data):
+    """Convert jsonalchemy keys to form field names."""
+    if "urls" in data:
+        for url in data["urls"]:
+            if "description" not in url:
+                data["webpage"] = url["value"]
+            else:
+                if url["description"].lower() == "twitter":
+                    data["twitter_username"] = url["value"]
+                elif url["description"].lower() == "blog":
+                    data["blog_url"] = url["value"]
+        del data["urls"]
+    if "fields" in data:
+        data["research_field"] = [field["name"].lower() for
+                                  field in data["fields"]]
+    if "positions" in data:
+        data["institution_history"] = []
+        for position in data["positions"]:
+            pos = {}
+            pos["name"] = position.get("institution", "")
+            pos["rank"] = position.get("rank", "").lower()
+            pos["start_year"] = position.get("start_date", "")
+            pos["end_year"] = position.get("end_date", "")
+            pos["current"] = True if position.get("status") else False
+            data["institution_history"].append(pos)
+        data["institution_history"].reverse()
+    if "phd_advisors" in data:
+        phd_advisors = data["phd_advisors"]
+        data["phd_advisors"] = []
+        for advisor in phd_advisors:
+            adv = {}
+            adv["name"] = advisor.get("name", "")
+            data["phd_advisors"].append(adv)
+
+
 @blueprint.route('/update', methods=['GET', 'POST'])
 @login_required
 @wash_arguments({'author_id': (int, 0)})
@@ -49,17 +84,7 @@ def update(author_id):
             author_id))
         data = Record.create(xml.text.encode("utf-8"), 'marc',
                              model='author').produce("json_for_form")
-
-    data["research_field"] = ["CHAO-DYN", "GR-QC"]
-    data["phd_advisors"] = [{"name":"test", "affiliation": "aff test"},
-                            {"name":"test 2", "affiliation": "aff test 2"}]
-    data["institution_history"] = [{
-        "name": "CERN",
-        "rank": "senior",
-        "start_year": "2014-01-01",
-        "end_year": "2015-01-01",
-        "current": False
-    }]
+        convert_for_form(data)
     form = AuthorUpdateForm(data=data)
     ctx = {
         "action": url_for('.update'),
