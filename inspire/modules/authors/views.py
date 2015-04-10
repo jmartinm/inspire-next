@@ -91,19 +91,19 @@ def update(author_id):
         "name": "authorUpdateForm",
         "id": "authorUpdateForm",
     }
-    if form.validate_on_submit():
-        # If it is needed to post process the form keys, for example to match
-        # the names in the JSONAlchemy, one can use the DataExporter.
-        # The keys will then be renamed using `export_key` parameter.
-        # visitor = DataExporter()
-        # visitor.visit(form)
-        # visitor.data
-        from invenio.modules.workflows.models import BibWorkflowObject
-        from flask.ext.login import current_user
-        myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
-        myobj.set_data(form.data)
-        # Start workflow. delayed=True will execute the workflow in the
-        # background using, for example, Celery.
-        myobj.start_workflow("demoworkflow", delayed=True)
-        return render_template('forms/form_demo_success.html', form=form)
+    # if form.validate_on_submit():
+    #     # If it is needed to post process the form keys, for example to match
+    #     # the names in the JSONAlchemy, one can use the DataExporter.
+    #     # The keys will then be renamed using `export_key` parameter.
+    #     # visitor = DataExporter()
+    #     # visitor.visit(form)
+    #     # visitor.data
+    #     from invenio.modules.workflows.models import BibWorkflowObject
+    #     from flask.ext.login import current_user
+    #     myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
+    #     myobj.set_data(form.data)
+    #     # Start workflow. delayed=True will execute the workflow in the
+    #     # background using, for example, Celery.
+    #     myobj.start_workflow("demoworkflow", delayed=True)
+    #     return render_template('forms/form_demo_success.html', form=form)
     return render_template('authors/update_form.html', form=form, **ctx)

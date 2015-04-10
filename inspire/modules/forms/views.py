@@ -17,7 +17,8 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template, url_for, request, abort
+from werkzeug.datastructures import MultiDict
 
 from inspire.modules.forms import fields
 
@@ -87,3 +88,16 @@ def demoform():
         myobj.start_workflow("demoworkflow", delayed=True)
         return render_template('forms/form_demo_success.html', form=form)
     return render_template('forms/form_demo.html', form=form, **ctx)
+
+@blueprint.route('/save', methods=['POST'])
+def save():
+    """Saves for and returns validation errors."""
+    from inspire.modules.authors.forms import AuthorUpdateForm
+    if request.method != 'POST':
+        abort(400)
+
+    is_submit = request.args.get('submit') == '1'
+    is_complete_form = request.args.get('all') == '1'
+    data = request.json or MultiDict({})
+    formdata = MultiDict(data or {})
+    import ipdb; ipdb.set_trace()

@@ -27,8 +27,8 @@ from invenio.modules.deposit.field_widgets import ColumnInput, \
                                                   ItemWidget, \
                                                   DynamicListWidget, \
                                                   DynamicItemWidget
-
-from inspire.modules.forms.form import InspireForm
+from invenio.modules.deposit.form import WebDepositForm
+# from inspire.modules.forms.form import InspireForm
 from invenio.modules.deposit import fields
 from inspire.modules.deposit.filters import clean_empty_list
 from inspire.modules.deposit.forms import AuthorInlineForm
@@ -97,7 +97,7 @@ class ColumnSelect(WrappedSelect):
         return '<div class="%(class_)s">%(field)s</div>'
 
 
-class InstitutionInlineForm(InspireForm):
+class InstitutionInlineForm(WebDepositForm):
 
     """Institution inline form."""
 
@@ -111,7 +111,7 @@ class InstitutionInlineForm(InspireForm):
                     ("masters", _("Master")),
                     ("undergrad", _("Undergrad"))]
 
-    name = fields.TextField(
+    name = fields.StringField(
         widget_classes='form-control',
         widget=ColumnInput(class_="col-md-6"),
         autocomplete='affiliation',
@@ -155,30 +155,30 @@ class DynamicUnsortedWidget(DynamicListWidget):
         super(DynamicUnsortedWidget, self).__init__(**kwargs)
 
 
-class AuthorUpdateForm(InspireForm):
+class AuthorUpdateForm(WebDepositForm):
 
     """Author update form."""
 
-    full_name = fields.TextField(
+    full_name = fields.StringField(
         label=_('Full name'),
         description='e.g. Lampen, John Francis',
         validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
 
-    display_name = fields.TextField(
+    display_name = fields.StringField(
         label=_('Display name'),
         description='e.g. Lampen, John',
         widget_classes="form-control"
     )
 
-    native_name = fields.TextField(
+    native_name = fields.StringField(
         label=_('Native name'),
         description=u'e.g. 麦迪娜',
         widget_classes="form-control"
     )
 
-    # email = fields.TextField(
+    # email = fields.StringField(
     #     label=_('Your Email'),
     #     description=_('Not displayed, contact only'),
     #     widget_classes="form-control",
@@ -188,14 +188,14 @@ class AuthorUpdateForm(InspireForm):
     #     ],
     # )
 
-    public_email = fields.TextField(
+    public_email = fields.StringField(
         label=_('Email (public)'),
         description="This email will be displayed in your public profile.",
         widget_classes="form-control",
         validators=[validators.Email()],
     )
 
-    orcid = fields.TextField(
+    orcid = fields.StringField(
         label=_('ORCID'),
         widget_classes="form-control",
         #validators=[validators.ORCIDValidator()],
@@ -214,25 +214,25 @@ class AuthorUpdateForm(InspireForm):
         widget_classes='form-control',
     )
 
-    webpage = fields.TextField(
+    webpage = fields.StringField(
         label=_('Your webpage'),
         placeholder='http://www.example.com',
         widget_classes="form-control",
-        validators=[validators.URL(), validators.Optional],
+        validators=[validators.URL()],
     )
 
-    blog_url = fields.TextField(
+    blog_url = fields.StringField(
         label=_('Your blog'),
         placeholder='http://www.example.com',
         widget_classes="form-control",
-        validators=[validators.URL(), validators.Optional],
+        validators=[validators.URL()],
     )
 
-    twitter_username = fields.TextField(
+    twitter_username = fields.StringField(
         label=_('Twitter'),
         placeholder='e.g. @inspirehep',
         widget_classes="form-control",
-        validators=[validators.URL(), validators.Optional],
+        validators=[validators.URL()],
     )
 
     research_field_options = [("acc-phys", _("acc-phys")),
