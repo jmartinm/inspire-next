@@ -93,6 +93,8 @@ def demoform():
 def save():
     """Saves for and returns validation errors."""
     from inspire.modules.authors.forms import AuthorUpdateForm
+    from flask import jsonify
+
     if request.method != 'POST':
         abort(400)
 
@@ -100,4 +102,13 @@ def save():
     is_complete_form = request.args.get('all') == '1'
     data = request.json or MultiDict({})
     formdata = MultiDict(data or {})
-    import ipdb; ipdb.set_trace()
+    x = AuthorUpdateForm(formdata=formdata)
+    x.validate()
+
+    result = {}
+    changed_msgs = dict(
+        (name, messages) for name, messages in x.messages.items()
+        if name in formdata.keys()
+    )
+    result['messages'] = changed_msgs
+    return jsonify(result)

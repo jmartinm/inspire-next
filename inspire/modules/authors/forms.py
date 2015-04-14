@@ -218,21 +218,18 @@ class AuthorUpdateForm(WebDepositForm):
         label=_('Your webpage'),
         placeholder='http://www.example.com',
         widget_classes="form-control",
-        validators=[validators.URL()],
     )
 
     blog_url = fields.StringField(
         label=_('Your blog'),
         placeholder='http://www.example.com',
         widget_classes="form-control",
-        validators=[validators.URL()],
     )
 
-    twitter_username = fields.StringField(
+    twitter_url = fields.StringField(
         label=_('Twitter'),
-        placeholder='e.g. @inspirehep',
+        placeholder='https://twitter.com/inspirehep',
         widget_classes="form-control",
-        validators=[validators.URL()],
     )
 
     research_field_options = [("acc-phys", _("acc-phys")),
@@ -328,7 +325,7 @@ class AuthorUpdateForm(WebDepositForm):
         ('Personal Information',
             ['full_name', 'display_name', 'native_name', 'email',
              'public_email', 'orcid', 'status', 'webpage', 'blog_url',
-             'twitter_username']),
+             'twitter_url', "twitter_hidden"]),
         ('Career information',
             ['research_field', 'institution_history', 'phd_advisors',
              'experiments']),
