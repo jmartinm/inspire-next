@@ -88,27 +88,3 @@ def demoform():
         myobj.start_workflow("demoworkflow", delayed=True)
         return render_template('forms/form_demo_success.html', form=form)
     return render_template('forms/form_demo.html', form=form, **ctx)
-
-@blueprint.route('/save', methods=['POST'])
-def save():
-    """Saves for and returns validation errors."""
-    from inspire.modules.authors.forms import AuthorUpdateForm
-    from flask import jsonify
-
-    if request.method != 'POST':
-        abort(400)
-
-    is_submit = request.args.get('submit') == '1'
-    is_complete_form = request.args.get('all') == '1'
-    data = request.json or MultiDict({})
-    formdata = MultiDict(data or {})
-    x = AuthorUpdateForm(formdata=formdata)
-    x.validate()
-
-    result = {}
-    changed_msgs = dict(
-        (name, messages) for name, messages in x.messages.items()
-        if name in formdata.keys()
-    )
-    result['messages'] = changed_msgs
-    return jsonify(result)

@@ -19,7 +19,9 @@
 
 import requests
 
-from flask import Blueprint, render_template, url_for
+from flask import abort, Blueprint, jsonify, render_template, request, url_for
+from werkzeug.datastructures import MultiDict
+
 from flask_login import login_required
 
 from invenio.base.decorators import wash_arguments
@@ -74,36 +76,63 @@ def convert_for_form(data):
 
 @blueprint.route('/update', methods=['GET', 'POST'])
 @login_required
-@wash_arguments({'author_id': (int, 0)})
-def update(author_id):
+@wash_arguments({'id': (int, 0)})
+def update(id):
     """View for INSPIRE author update form."""
-    # from inspire.modules.forms.utils import DataExporter
     data = {}
-    if author_id:
+    if id:
         xml = requests.get("https://inspirehep.net/record/{}/export/xm".format(
-            author_id))
+            id))
         data = Record.create(xml.text.encode("utf-8"), 'marc',
                              model='author').produce("json_for_form")
         convert_for_form(data)
     form = AuthorUpdateForm(data=data)
     ctx = {
-        "action": url_for('.update'),
+        "action": url_for('.submitupdate'),
         "name": "authorUpdateForm",
         "id": "authorUpdateForm",
     }
-    # if form.validate_on_submit():
-    #     # If it is needed to post process the form keys, for example to match
-    #     # the names in the JSONAlchemy, one can use the DataExporter.
-    #     # The keys will then be renamed using `export_key` parameter.
-    #     # visitor = DataExporter()
-    #     # visitor.visit(form)
-    #     # visitor.data
-    #     from invenio.modules.workflows.models import BibWorkflowObject
-    #     from flask.ext.login import current_user
-    #     myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
-    #     myobj.set_data(form.data)
-    #     # Start workflow. delayed=True will execute the workflow in the
-    #     # background using, for example, Celery.
-    #     myobj.start_workflow("demoworkflow", delayed=True)
-    #     return render_template('forms/form_demo_success.html', form=form)
+
     return render_template('authors/update_form.html', form=form, **ctx)
+
+
+@blueprint.route('/submitupdate', methods=['POST'])
+@login_required
+def submitupdate():
+    """View for INSPIRE author update form."""
+    from inspire.modules.forms.utils import DataExporter
+    from invenio.modules.workflows.models import BibWorkflowObject
+    from flask.ext.login import current_user
+    import ipdb; ipdb.set_trace()
+    form = AuthorUpdateForm(formdata=request.form)
+    visitor = DataExporter()
+    visitor.visit(form)
+
+    myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
+    myobj.set_data(visitor.data)
+    # Start workflow. delayed=True will execute the workflow in the
+    # background using, for example, Celery.
+    myobj.start_workflow("demoworkflow", delayed=True)
+
+    return render_template('authors/update_completed.html')
+
+
+@blueprint.route('/validate', methods=['POST'])
+def validate():
+    """Validate form and return validation errors."""
+    if request.method != 'POST':
+        abort(400)
+
+    data = request.json or MultiDict({})
+    formdata = MultiDict(data or {})
+
+    form = AuthorUpdateForm(formdata=formdata)
+    form.validate()
+
+    result = {}
+    changed_msgs = dict(
+        (name, messages) for name, messages in form.messages.items()
+        if name in formdata.keys()
+    )
+    result['messages'] = changed_msgs
+    return jsonify(result)

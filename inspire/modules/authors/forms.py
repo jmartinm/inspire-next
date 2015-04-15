@@ -148,6 +148,7 @@ class DynamicUnsortedItemWidget(DynamicItemWidget):
     def _sort_button(self):
         return ""
 
+
 class DynamicUnsortedWidget(DynamicListWidget):
     def __init__(self, **kwargs):
         """Initialize dynamic list widget."""
@@ -192,7 +193,7 @@ class AuthorUpdateForm(WebDepositForm):
         label=_('Email (public)'),
         description="This email will be displayed in your public profile.",
         widget_classes="form-control",
-        validators=[validators.Email()],
+        validators=[validators.Optional(), validators.Email()],
     )
 
     orcid = fields.StringField(

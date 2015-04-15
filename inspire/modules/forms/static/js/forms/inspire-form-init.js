@@ -20,7 +20,7 @@
  * or submit itself to any jurisdiction.
  */
 
-require(['js/deposit/form', 'js/forms/inspire-form'], function() {
+require(['js/forms/inspire-form'], function() {
   // Loads the required module into a bundle that can be used in the html
   // pages.
 });
