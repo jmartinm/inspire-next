@@ -112,7 +112,7 @@ define(function(require, exports, module) {
       var fields = $(selector).serializeArray(),
           uploader = this.select('uploaderSelector'),
           $checkboxes = $('input[type=checkbox]:not(:checked)'),
-          $bootstrap_multiselect = $("[multiple=multiple]");
+          $bootstrap_multiselect = $("select[multiple]");
 
       if (uploader.length) {
         fields.push({

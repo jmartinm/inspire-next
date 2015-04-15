@@ -126,13 +126,13 @@ class InstitutionInlineForm(WebDepositForm):
         validators=[validators.DataRequired()],
     )
 
-    start_year = fields.Date(
+    start_year = fields.StringField(
         placeholder=_('Start year'),
         description='Format: YYYY.',
         widget=date_widget,
     )
 
-    end_year = fields.Date(
+    end_year = fields.StringField(
         placeholder=_('End year'),
         description='Format: YYYY.',
         widget=date_widget,

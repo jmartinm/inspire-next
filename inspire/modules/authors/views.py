@@ -81,7 +81,7 @@ def update(id):
     """View for INSPIRE author update form."""
     data = {}
     if id:
-        xml = requests.get("https://inspirehep.net/record/{}/export/xm".format(
+        xml = requests.get("http://inspirehep.net/record/{}/export/xm".format(
             id))
         data = Record.create(xml.text.encode("utf-8"), 'marc',
                              model='author').produce("json_for_form")
@@ -103,7 +103,6 @@ def submitupdate():
     from inspire.modules.forms.utils import DataExporter
     from invenio.modules.workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
-    import ipdb; ipdb.set_trace()
     form = AuthorUpdateForm(formdata=request.form)
     visitor = DataExporter()
     visitor.visit(form)
@@ -112,7 +111,7 @@ def submitupdate():
     myobj.set_data(visitor.data)
     # Start workflow. delayed=True will execute the workflow in the
     # background using, for example, Celery.
-    myobj.start_workflow("demoworkflow", delayed=True)
+    myobj.start_workflow("authorupdate", delayed=True)
 
     return render_template('authors/update_completed.html')
 
