@@ -20,25 +20,37 @@
 from flask import render_template
 
 from invenio.modules.workflows.definitions import WorkflowBase
+from invenio.modules.workflows.tasks.logic_tasks import (
+    workflow_else,
+    workflow_if,
+)
+from invenio.modules.workflows.tasks.marcxml_tasks import (
+    approve_record,
+    was_approved
+)
+from invenio.modules.workflows.tasks.workflows_tasks import log_info
 
-from inspire.modules.workflows.tasks.submission import create_ticket
-from ..tasks import (create_marcxml_record, send_robotupload,
-                     convert_data_to_model)
+from ..tasks import send_robotupload, create_marcxml_record
 
 
-class authorupdate(WorkflowBase):
+class authornew(WorkflowBase):
 
-    """Workflow for author updates."""
+    """Workflow for new author information."""
 
-    object_type = "authorupdate"
+    object_type = "authornew"
 
     workflow = [
-        convert_data_to_model(),
-        create_marcxml_record(),
-        send_robotupload(mode="holdingpen"),
-        create_ticket(template="deposit/tickets/curator_submitted.html",
-                      queue="Authors",
-                      ticket_id_key="ticket_id")
+        approve_record,
+        workflow_if(was_approved),
+        [
+            create_marcxml_record(),
+            send_robotupload(mode="insert"),
+            log_info("New author info has been approved"),
+        ],
+        workflow_else,
+        [
+            log_info("New author info has been rejected")
+        ]
     ]
 
     @staticmethod

@@ -74,6 +74,27 @@ def convert_for_form(data):
             data["phd_advisors"].append(adv)
 
 
+@blueprint.route('/validate', methods=['POST'])
+def validate():
+    """Validate form and return validation errors."""
+    if request.method != 'POST':
+        abort(400)
+
+    data = request.json or MultiDict({})
+    formdata = MultiDict(data or {})
+
+    form = AuthorUpdateForm(formdata=formdata)
+    form.validate()
+
+    result = {}
+    changed_msgs = dict(
+        (name, messages) for name, messages in form.messages.items()
+        if name in formdata.keys()
+    )
+    result['messages'] = changed_msgs
+    return jsonify(result)
+
+
 @blueprint.route('/update', methods=['GET', 'POST'])
 @login_required
 @wash_arguments({'id': (int, 0)})
@@ -96,10 +117,31 @@ def update(id):
     return render_template('authors/update_form.html', form=form, **ctx)
 
 
+@blueprint.route('/new', methods=['GET', 'POST'])
+@login_required
+@wash_arguments({'aid': (unicode, u"")})
+def new(aid):
+    """View for INSPIRE author new form."""
+    data = {}
+    if aid:
+        # Add BAI information to form in order to keep connection between
+        # a HEPName and an author profile.
+        data["author_id"] = aid
+
+    form = AuthorUpdateForm(data=data)
+    ctx = {
+        "action": url_for('.submitnew'),
+        "name": "authorUpdateForm",
+        "id": "authorUpdateForm",
+    }
+
+    return render_template('authors/new_form.html', form=form, **ctx)
+
+
 @blueprint.route('/submitupdate', methods=['POST'])
 @login_required
 def submitupdate():
-    """View for INSPIRE author update form."""
+    """Form action handler for INSPIRE author update form."""
     from inspire.modules.forms.utils import DataExporter
     from invenio.modules.workflows.models import BibWorkflowObject
     from flask.ext.login import current_user
@@ -116,22 +158,21 @@ def submitupdate():
     return render_template('authors/update_completed.html')
 
 
-@blueprint.route('/validate', methods=['POST'])
-def validate():
-    """Validate form and return validation errors."""
-    if request.method != 'POST':
-        abort(400)
+@blueprint.route('/submitnew', methods=['POST'])
+@login_required
+def submitnew():
+    """Form action handler for INSPIRE author new form."""
+    from inspire.modules.forms.utils import DataExporter
+    from invenio.modules.workflows.models import BibWorkflowObject
+    from flask.ext.login import current_user
+    form = AuthorUpdateForm(formdata=request.form)
+    visitor = DataExporter()
+    visitor.visit(form)
 
-    data = request.json or MultiDict({})
-    formdata = MultiDict(data or {})
+    myobj = BibWorkflowObject.create_object(id_user=current_user.get_id())
+    myobj.set_data(visitor.data)
+    # Start workflow. delayed=True will execute the workflow in the
+    # background using, for example, Celery.
+    myobj.start_workflow("authornew", delayed=True)
 
-    form = AuthorUpdateForm(formdata=formdata)
-    form.validate()
-
-    result = {}
-    changed_msgs = dict(
-        (name, messages) for name, messages in form.messages.items()
-        if name in formdata.keys()
-    )
-    result['messages'] = changed_msgs
-    return jsonify(result)
+    return render_template('authors/update_completed.html')

@@ -19,8 +19,9 @@
 #
 
 from wtforms import validators
-from wtforms.widgets import html_params, HTMLString, Select
+from wtforms.widgets import html_params, HiddenInput, HTMLString, Select
 
+from invenio.base.globals import cfg
 from invenio.base.i18n import _
 from invenio.modules.deposit.field_widgets import ColumnInput, \
                                                   ExtendedListWidget, \
@@ -31,7 +32,6 @@ from invenio.modules.deposit.form import WebDepositForm
 # from inspire.modules.forms.form import InspireForm
 from invenio.modules.deposit import fields
 from inspire.modules.deposit.filters import clean_empty_list
-from inspire.modules.deposit.forms import AuthorInlineForm
 
 
 def date_widget(field, **kwargs):
@@ -143,6 +143,30 @@ class InstitutionInlineForm(WebDepositForm):
     )
 
 
+class PHDAdvisorsInlineForm(WebDepositForm):
+
+    """Phd Advisors inline form."""
+
+    name = fields.TextField(
+        widget_classes='form-control',
+        widget=ColumnInput(class_="col-xs-6", description="Family name, First name"),
+        export_key='full_name',
+    )
+
+    degree_type = fields.SelectField(
+        label=_('Degree Type'),
+        widget_classes="form-control",
+        widget=ColumnSelect(class_="col-xs-4 col-pad-0", description="Degree Type"),
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        super(PHDAdvisorsInlineForm, self).__init__(*args, **kwargs)
+        from invenio.modules.knowledge.api import get_kb_mappings
+        self.degree_type.choices = [('', '')] + [(x['value'], x['value'])
+            for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
+
+
 class DynamicUnsortedItemWidget(DynamicItemWidget):
 
     def _sort_button(self):
@@ -179,16 +203,6 @@ class AuthorUpdateForm(WebDepositForm):
         widget_classes="form-control"
     )
 
-    # email = fields.StringField(
-    #     label=_('Your Email'),
-    #     description=_('Not displayed, contact only'),
-    #     widget_classes="form-control",
-    #     validators=[
-    #         validators.DataRequired(),
-    #         validators.Email()
-    #     ],
-    # )
-
     public_email = fields.StringField(
         label=_('Email (public)'),
         description="This email will be displayed in your public profile.",
@@ -199,7 +213,11 @@ class AuthorUpdateForm(WebDepositForm):
     orcid = fields.StringField(
         label=_('ORCID'),
         widget_classes="form-control",
-        #validators=[validators.ORCIDValidator()],
+    )
+
+    # Hidden field to hold author id information
+    author_id = fields.StringField(
+        widget=HiddenInput()
     )
 
     status_options = [("", ""),
@@ -282,12 +300,11 @@ class AuthorUpdateForm(WebDepositForm):
         add_label='Add another institution',
         min_entries=1,
         widget=DynamicUnsortedWidget()
-        #validators=[InstitutionValidation],
     )
 
     phd_advisors = fields.DynamicFieldList(
         fields.FormField(
-            AuthorInlineForm,
+            PHDAdvisorsInlineForm,
             widget=ExtendedListWidget(
                 item_widget=ItemWidget(),
                 html_tag='div',
@@ -312,8 +329,6 @@ class AuthorUpdateForm(WebDepositForm):
         description='Send us any comments you might have. They will not be visible.',
         widget_classes="form-control"
     )
-
-    # recaptcha = RecaptchaField()
 
     #
     # Form Configuration

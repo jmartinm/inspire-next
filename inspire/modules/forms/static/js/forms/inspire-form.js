@@ -821,6 +821,17 @@ define(function(require, exports, module) {
   }
 
   /**
+   * Hide completely hidden fields to avoid seeing labels.
+   * "not" part excludes field list elements e.g. authors
+   */
+  this.hideHiddenFields = function(ev, data) {
+    $('input[type="hidden"]')
+      .not('[id$="__last_index__"]')
+      .parents('.form-group')
+      .hide();
+  }
+
+  /**
      * Disable form submit on ENTER
      */
   this.preventFormSubmit = function(ev, data) {
@@ -862,6 +873,7 @@ define(function(require, exports, module) {
     this.on('handleFieldMessage', this.handleFieldMessage);
     this.on("form:init-autocomplete", this.initAutocomplete);
     this.preventFormSubmit();
+    this.hideHiddenFields();
 
     this.on(document, "click", {
       formSaveClass: this.onSaveClick,
