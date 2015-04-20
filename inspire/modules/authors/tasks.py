@@ -157,7 +157,10 @@ def send_robotupload(mode="insert"):
         else:
             obj.log.info("Robotupload sent!")
             obj.log.info(result.text)
-            eng.halt("Waiting for robotupload: {0}".format(result.text))
+            if mode == "holdingpen":
+                obj.continue_workflow(delayed=True)
+            else:
+                eng.halt("Waiting for robotupload: {0}".format(result.text))
         obj.log.info("end of upload")
 
     return _send_robotupload

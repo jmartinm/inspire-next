@@ -184,6 +184,16 @@ class AuthorUpdateForm(WebDepositForm):
 
     """Author update form."""
 
+    # Hidden field to hold author id information
+    author_id = fields.StringField(
+        widget=HiddenInput()
+    )
+
+    # Hidden field to hold record id information
+    recid = fields.IntegerField(
+        widget=HiddenInput()
+    )
+
     full_name = fields.StringField(
         label=_('Full name'),
         description='e.g. Lampen, John Francis',
@@ -213,11 +223,6 @@ class AuthorUpdateForm(WebDepositForm):
     orcid = fields.StringField(
         label=_('ORCID'),
         widget_classes="form-control",
-    )
-
-    # Hidden field to hold author id information
-    author_id = fields.StringField(
-        widget=HiddenInput()
     )
 
     status_options = [("", ""),

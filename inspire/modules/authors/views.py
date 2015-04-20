@@ -107,6 +107,7 @@ def update(id):
         data = Record.create(xml.text.encode("utf-8"), 'marc',
                              model='author').produce("json_for_form")
         convert_for_form(data)
+        data["recid"] = id
     form = AuthorUpdateForm(data=data)
     ctx = {
         "action": url_for('.submitupdate'),
