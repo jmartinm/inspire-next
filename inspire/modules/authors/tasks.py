@@ -131,8 +131,6 @@ def send_robotupload(mode="insert"):
         callback_url = os.path.join(cfg["CFG_SITE_URL"],
                                     "callback/workflows/robotupload")
 
-        # Here get the marcxml from the extra data
-        print obj.get_extra_data()
         marcxml = obj.get_extra_data().get("marcxml")
 
         if not marcxml:
@@ -157,10 +155,52 @@ def send_robotupload(mode="insert"):
         else:
             obj.log.info("Robotupload sent!")
             obj.log.info(result.text)
-            if mode == "holdingpen":
-                obj.continue_workflow(delayed=True)
-            else:
+            if mode != "holdingpen":
                 eng.halt("Waiting for robotupload: {0}".format(result.text))
         obj.log.info("end of upload")
 
     return _send_robotupload
+
+
+def create_ticket(template, queue="Test"):
+    """Create a ticket."""
+
+    @wraps(create_ticket)
+    def _create_ticket(obj, eng):
+        from invenio.base.globals import cfg
+        from invenio.modules.access.control import acc_get_user_email
+        from flask import render_template
+        from inspire.utils.tickets import get_instance
+
+        user_email = acc_get_user_email(obj.id_user)
+        recid = obj.data.get("recid", "")
+
+        subject = "New HepNames update from {}".format(user_email)
+        body = render_template(
+            template,
+            email=user_email,
+            url="http://inspirehep.net/record/{}".format(recid),
+            bibedit_url="http://inspirehep.net/record/{}/edit".format(
+                recid),
+            user_comment=obj.extra_data.get("comments", ""),
+        ).strip()
+
+        rt = get_instance() if cfg.get("PRODUCTION_MODE") else None
+        rt_queue = cfg.get("CFG_BIBCATALOG_QUEUES") or queue
+        if not rt:
+            obj.log.error("No RT instance available. Skipping!")
+            obj.log.info("Ticket ignored.")
+        else:
+            body = "\n ".join([line.strip() for line in body.split("\n")])
+            ticket_id = rt.create_ticket(
+                Queue=rt_queue,
+                Subject=subject,
+                Text=body,
+                Requestors=user_email,
+                CF_RecordID=recid
+            )
+            obj.log.info("Ticket {0} created:\n{1}".format(
+                ticket_id,
+                body.encode("utf-8", "ignore")
+            ))
+    return _create_ticket

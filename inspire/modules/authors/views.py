@@ -97,8 +97,8 @@ def validate():
 
 @blueprint.route('/update', methods=['GET', 'POST'])
 @login_required
-@wash_arguments({'id': (int, 0)})
-def update(id):
+@wash_arguments({'id': (int, 0), 'aid': (unicode, u"")})
+def update(id, aid):
     """View for INSPIRE author update form."""
     data = {}
     if id:
@@ -108,6 +108,8 @@ def update(id):
                              model='author').produce("json_for_form")
         convert_for_form(data)
         data["recid"] = id
+    if aid:
+        data["author_id"] = aid
     form = AuthorUpdateForm(data=data)
     ctx = {
         "action": url_for('.submitupdate'),

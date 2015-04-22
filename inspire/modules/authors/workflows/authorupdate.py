@@ -21,9 +21,8 @@ from flask import render_template
 
 from invenio.modules.workflows.definitions import WorkflowBase
 
-from inspire.modules.workflows.tasks.submission import create_ticket
 from ..tasks import (create_marcxml_record, send_robotupload,
-                     convert_data_to_model)
+                     convert_data_to_model, create_ticket)
 
 
 class authorupdate(WorkflowBase):
@@ -36,9 +35,8 @@ class authorupdate(WorkflowBase):
         convert_data_to_model(),
         create_marcxml_record(),
         send_robotupload(mode="holdingpen"),
-        create_ticket(template="deposit/tickets/curator_submitted.html",
-                      queue="Authors",
-                      ticket_id_key="ticket_id")
+        create_ticket(template="authors/tickets/author_update.html",
+                      queue="Authors")
     ]
 
     @staticmethod
