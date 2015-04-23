@@ -18,6 +18,8 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
+# import six
+
 from wtforms import validators
 from wtforms.widgets import html_params, HiddenInput, HTMLString, Select
 
@@ -29,9 +31,18 @@ from invenio.modules.deposit.field_widgets import ColumnInput, \
                                                   DynamicListWidget, \
                                                   DynamicItemWidget
 from invenio.modules.deposit.form import WebDepositForm
-# from inspire.modules.forms.form import InspireForm
 from invenio.modules.deposit import fields
 from inspire.modules.deposit.filters import clean_empty_list
+
+from .validators import DOIValidator
+
+
+# def clean_orcid(value):
+#     """Remove leading and trailing spaces from string."""
+#     if isinstance(value, six.string_types):
+#         return value.split("/")[-1]
+#     else:
+#         return value
 
 
 def date_widget(field, **kwargs):
@@ -193,6 +204,14 @@ class DynamicUnsortedWidget(DynamicListWidget):
         super(DynamicUnsortedWidget, self).__init__(**kwargs)
 
 
+# class DOIField(fields.StringField):
+#     def process_formdata(self, valuelist):
+#         self.data = "hello"
+
+#     def _value(self):
+#         return self.data
+
+
 class AuthorUpdateForm(WebDepositForm):
 
     """Author update form."""
@@ -242,9 +261,11 @@ class AuthorUpdateForm(WebDepositForm):
     )
 
     orcid = fields.StringField(
-        label=_('ORCID'),
+        label='ORCID <img src="/img/orcid_icon_24.png" style="height:20px">',
         widget_classes="form-control",
-        description="""ORCID provides a persistent digital identifier that distinguishes you from other researchers. Learn more at <a href="orcid.org">orcid.org</a>"""
+        description="""ORCID provides a persistent digital identifier that distinguishes you from other researchers. Learn more at <a href="http://orcid.org" target="_blank">orcid.org</a>""",
+        # filters=[clean_orcid],
+        validators=[DOIValidator]
     )
 
     status_options = [("", ""),

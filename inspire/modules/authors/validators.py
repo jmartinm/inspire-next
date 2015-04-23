@@ -1,4 +1,5 @@
-{#
+# -*- coding: utf-8 -*-
+#
 ## This file is part of INSPIRE.
 ## Copyright (C) 2015 CERN.
 ##
@@ -15,14 +16,22 @@
 ## You should have received a copy of the GNU General Public License
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-#}
+#
 
-{% if thisfield.label.text %}
-  <label class="control-label col-md-3 {{' required' if thisfield.flags.required}}{{ ' error' if thisfield.errors }}" for="{{thisfield.label.field_id}}">
-    {%- if thisfield.icon %}
-      <span class=""><i class="{{ thisfield.icon }}"></i></span>
-    {%- endif %}
-    {{ thisfield.label.text|safe }}
-  </label>
-{% endif %}
+from wtforms.validators import StopValidation
 
+
+def DOIValidator(form, field):
+    """Validate that the given ORCID exists."""
+    from requests import RequestException
+    import orcid
+    msg = u"The ORCID iD was not found in <a href='http://orcid.org' target='_blank'>orcid.org</a>. Please, make sure it is valid."
+    import ipdb; ipdb.set_trace()
+    orcid_id = field.data
+    api = orcid.PublicAPI()
+    try:
+        result = api.search_public("orcid:" + orcid_id)
+        if result['orcid-search-results']["num-found"] == 0:
+            raise StopValidation(msg)
+    except RequestException:
+        return

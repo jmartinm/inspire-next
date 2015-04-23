@@ -60,6 +60,7 @@ setup(
         "mixer==4.9.5",
         "ipython",
         "Babel>=1.3",
+        "orcid",
         "Invenio",
     ],
     dependency_links=[
