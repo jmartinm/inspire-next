@@ -143,9 +143,9 @@ class InstitutionInlineForm(WebDepositForm):
     )
 
 
-class PHDAdvisorsInlineForm(WebDepositForm):
+class AdvisorsInlineForm(WebDepositForm):
 
-    """Phd Advisors inline form."""
+    """Advisors inline form."""
 
     name = fields.TextField(
         widget_classes='form-control',
@@ -156,15 +156,28 @@ class PHDAdvisorsInlineForm(WebDepositForm):
     degree_type = fields.SelectField(
         label=_('Degree Type'),
         widget_classes="form-control",
+        default="PhD",
         widget=ColumnSelect(class_="col-xs-4 col-pad-0", description="Degree Type"),
     )
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
-        super(PHDAdvisorsInlineForm, self).__init__(*args, **kwargs)
+        super(AdvisorsInlineForm, self).__init__(*args, **kwargs)
         from invenio.modules.knowledge.api import get_kb_mappings
         self.degree_type.choices = [('', '')] + [(x['value'], x['value'])
             for x in get_kb_mappings(cfg["DEPOSIT_INSPIRE_DEGREE_KB"])]
+
+
+class WebpageInlineForm(WebDepositForm):
+
+    """URL inline form."""
+
+    webpage = fields.StringField(
+        label=_('Your webpage'),
+        placeholder='http://www.example.com',
+        widget=ColumnInput(class_="col-xs-10"),
+        widget_classes="form-control",
+    )
 
 
 class DynamicUnsortedItemWidget(DynamicItemWidget):
@@ -191,19 +204,27 @@ class AuthorUpdateForm(WebDepositForm):
 
     # Hidden field to hold record id information
     recid = fields.IntegerField(
-        widget=HiddenInput()
+        widget=HiddenInput(),
+        validators=[validators.Optional()],
     )
 
-    full_name = fields.StringField(
-        label=_('Full name'),
-        description='e.g. Lampen, John Francis',
+    given_names = fields.StringField(
+        label=_('Given names'),
+        description='e.g. John Francis',
+        validators=[validators.DataRequired()],
+        widget_classes="form-control"
+    )
+
+    family_name = fields.StringField(
+        label=_('Family name'),
+        description='e.g. Lampen',
         validators=[validators.DataRequired()],
         widget_classes="form-control"
     )
 
     display_name = fields.StringField(
         label=_('Display name'),
-        description='e.g. Lampen, John',
+        description='How would you like to be addressed throughout the site? e.g. Lampen, John',
         widget_classes="form-control"
     )
 
@@ -223,6 +244,7 @@ class AuthorUpdateForm(WebDepositForm):
     orcid = fields.StringField(
         label=_('ORCID'),
         widget_classes="form-control",
+        description="""ORCID provides a persistent digital identifier that distinguishes you from other researchers. Learn more at <a href="orcid.org">orcid.org</a>"""
     )
 
     status_options = [("", ""),
@@ -238,22 +260,40 @@ class AuthorUpdateForm(WebDepositForm):
         widget_classes='form-control',
     )
 
-    webpage = fields.StringField(
-        label=_('Your webpage'),
-        placeholder='http://www.example.com',
-        widget_classes="form-control",
-    )
-
     blog_url = fields.StringField(
-        label=_('Your blog'),
+        label=_('Blog'),
         placeholder='http://www.example.com',
+        icon="fa fa-wordpress",
         widget_classes="form-control",
     )
 
     twitter_url = fields.StringField(
         label=_('Twitter'),
         placeholder='https://twitter.com/inspirehep',
+        icon="fa fa-twitter",
         widget_classes="form-control",
+    )
+
+    linkedin_url = fields.StringField(
+        label=_('Linkedin'),
+        placeholder='https://www.linkedin.com/pub/john-francis-lampen/16/750/778',
+        icon="fa fa-linkedin-square",
+        widget_classes="form-control",
+    )
+
+    websites = fields.DynamicFieldList(
+        fields.FormField(
+            WebpageInlineForm,
+            widget=ExtendedListWidget(
+                item_widget=ItemWidget(),
+                html_tag='div',
+            ),
+        ),
+        add_label=_('Add another website'),
+        min_entries=1,
+        widget_classes='ui-disable-sort',
+        icon="fa fa-globe",
+        widget=DynamicUnsortedWidget()
     )
 
     research_field_options = [("acc-phys", _("acc-phys")),
@@ -304,21 +344,23 @@ class AuthorUpdateForm(WebDepositForm):
         label='Institution History',
         add_label='Add another institution',
         min_entries=1,
-        widget=DynamicUnsortedWidget()
+        widget=DynamicUnsortedWidget(),
+        widget_classes="ui-disable-sort"
     )
 
-    phd_advisors = fields.DynamicFieldList(
+    advisors = fields.DynamicFieldList(
         fields.FormField(
-            PHDAdvisorsInlineForm,
+            AdvisorsInlineForm,
             widget=ExtendedListWidget(
                 item_widget=ItemWidget(),
                 html_tag='div',
             ),
         ),
-        label='Ph.D. Advisors',
-        add_label='Add another Ph.D. advisor',
+        label='Advisors',
+        add_label='Add another advisor',
         min_entries=1,
-        widget=DynamicUnsortedWidget()
+        widget=DynamicUnsortedWidget(),
+        widget_classes="ui-disable-sort"
     )
 
     # experiments = fields.SelectMultipleField(
@@ -344,11 +386,12 @@ class AuthorUpdateForm(WebDepositForm):
 
     groups = [
         ('Personal Information',
-            ['full_name', 'display_name', 'native_name', 'email',
-             'public_email', 'orcid', 'status', 'webpage', 'blog_url',
-             'twitter_url', "twitter_hidden"]),
-        ('Career information',
-            ['research_field', 'institution_history', 'phd_advisors',
+            ['given_names', 'family_name', 'display_name', 'native_name', 'email',
+             'public_email', 'status', 'orcid']),
+        ('Personal Websites',
+            ['blog_url', 'twitter_url', "twitter_hidden", 'linkedin_url', 'websites']),
+        ('Career Information',
+            ['research_field', 'institution_history', 'advisors',
              'experiments']),
         ('Comments',
             ['comments'])

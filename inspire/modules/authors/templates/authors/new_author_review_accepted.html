@@ -16,15 +16,11 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-<br>
-Data submitted by the user:
-<pre>
-{{marcxml}}
-</pre>
-<br>
-{% if comments %}
-	User comments:
-	<pre>{{comments}}</pre>
-	<br>
-{% endif %}
-<p>To edit it go <a href={{form_url}}>Back to user form</a></p>
+{%- extends "page.html" -%}
+
+{% block body %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+  <strong>The author update has been approved<br></strong><br><a href="{{url_for('holdingpen.maintable')}}">Go back to the Holding Pen.</a>
+</div>
+{% endblock body %}

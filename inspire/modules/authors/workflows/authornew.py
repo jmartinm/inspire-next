@@ -17,7 +17,7 @@
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #
 
-from flask import render_template
+from flask import render_template, url_for
 
 from invenio.modules.workflows.definitions import WorkflowBase
 from invenio.modules.workflows.tasks.logic_tasks import (
@@ -30,7 +30,9 @@ from invenio.modules.workflows.tasks.marcxml_tasks import (
 )
 from invenio.modules.workflows.tasks.workflows_tasks import log_info
 
-from ..tasks import send_robotupload, create_marcxml_record
+from ..tasks import send_robotupload, \
+    create_marcxml_record, \
+    convert_data_to_model
 
 
 class authornew(WorkflowBase):
@@ -40,11 +42,15 @@ class authornew(WorkflowBase):
     object_type = "authornew"
 
     workflow = [
+        # Create ticket for cataloger
+        # Create ticket for user
+        convert_data_to_model(),
+        create_marcxml_record(),
         approve_record,
         workflow_if(was_approved),
         [
-            create_marcxml_record(),
             send_robotupload(mode="insert"),
+            # Create ticket for user - upload is ready
             log_info("New author info has been approved"),
         ],
         workflow_else,
@@ -70,5 +76,10 @@ class authornew(WorkflowBase):
     @staticmethod
     def formatter(bwo, **kwargs):
         """Return formatted data of object."""
+        form_url = url_for("inspire_authors.newreview", objectid=bwo.id)
+        extra_data = bwo.get_extra_data()
         return render_template("authors/workflows/authorupdate.html",
-                               data=bwo.get_data())
+                               data=bwo.get_data(),
+                               marcxml=extra_data.get("marcxml"),
+                               form_url=form_url,
+                               comments=extra_data.get("comments"))

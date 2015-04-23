@@ -16,12 +16,7 @@
 ## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
 ## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 #}
-{%- extends "forms/form.html" -%}
-
-{% block global_bundles %}
-  {{ super() }}
-  {% bundles "deposit.css", "author-update-form.css" %}
-{% endblock %}
+{%- extends "authors/update_form.html" -%}
 
 {% block form_title scoped %}
   <div class="row">
@@ -33,48 +28,3 @@
   This form allows you to add new author information. All modifications are transferred to <a href="http://inspirehep.net">http://inspirehep.net</a> upon approval.
   </div>
 {% endblock form_title %}
-
-{% block javascript %}
-<script type="text/javascript">
-require(
-  [
-    "jquery",
-    "js/forms/inspire-form",
-  ],
-
-  function(
-    $,
-    InspireForm
-  ) {
-
-    $(function() {
-
-    var config = {
-      form: {
-        save_url: '{{ url_for("inspire_authors.validate") }}',
-        save_all_url: '{{ url_for("inspire_authors.validate", all='1') }}',
-        complete_url: '{{ url_for("inspire_authors.validate", submit='1') }}',
-        datepicker_element: '.datepicker',
-        datepicker_options: {
-            format: "YYYY",
-            pickTime: false
-        },
-        // Selectors
-        datepickerSelector: '.datepicker',
-        formSelector: '#authorUpdateForm',
-        formDialogSelector: '#form-submit-dialog',
-
-        // Classes
-        formSaveClass: '.form-save',
-        formSubmitClass: '.form-submit',
-        dynamicFieldListClass : ".dynamic-field-list",
-        uploaderSelector: "#uploader"
-      }
-    };
-
-    // Initialize form
-    InspireForm.attachTo("#authorUpdateForm", config.form);
-  });
-});
-</script>
-{% endblock javascript %}

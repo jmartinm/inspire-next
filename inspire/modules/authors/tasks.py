@@ -25,7 +25,7 @@ from inspire.modules.deposit.utils import filter_empty_helper
 def filter_empty_elements(recjson):
     """Filter empty fields."""
     list_fields = [
-        'institution_history', 'phd_advisors'
+        'institution_history', 'advisors', 'websites'
     ]
     for key in list_fields:
         recjson[key] = filter(
@@ -40,6 +40,7 @@ def create_marcxml_record():
     @wraps(create_marcxml_record)
     def _create_marcxml_record(obj, eng):
         from invenio.modules.records.api import Record
+        obj.log.info("Creating marcxml record")
         x = Record.create(obj.data, 'json', model='author')
         obj.extra_data["marcxml"] = x.legacy_export_as_marc()
     return _create_marcxml_record
@@ -49,25 +50,28 @@ def convert_data_to_model():
     """Manipulate form data to match author model keys."""
     @wraps(create_marcxml_record)
     def _convert_data_to_model(obj, eng):
+        import copy
+        # Save original form data for later access
+        obj.extra_data["formdata"] = copy.deepcopy(obj.data)
+
         data = obj.data
         filter_empty_elements(data)
         data["name"] = {}
         if "status" in data and data["status"]:
             data["name"]["status"] = data["status"]
-        if "full_name" in data and data["full_name"]:
-            data["name"]["last"] = data["full_name"].split(",")[0].strip()
-            try:
-                data["name"]["first"] = data["full_name"].split(",")[1].strip()
-            except IndexError:
-                pass
+        if "given_names" in data and data["given_names"]:
+            data["name"]["first"] = data["given_names"].strip()
+        if "family_name" in data and data["family_name"]:
+            data["name"]["last"] = data["family_name"].strip()
         if "display_name" in data and data["display_name"]:
             data["name"]["preferred_name"] = data["display_name"]
         data["urls"] = []
-        if "webpage" in data and data["webpage"]:
-            data["urls"].append({
-                "value": data["webpage"],
-                "description": ""
-            })
+        if "websites" in data and data["websites"]:
+            for website in data["websites"]:
+                data["urls"].append({
+                    "value": website["webpage"],
+                    "description": ""
+                })
         if "twitter_url" in data and data["twitter_url"]:
             data["urls"].append({
                 "value": data["twitter_url"],
@@ -77,6 +81,11 @@ def convert_data_to_model():
             data["urls"].append({
                 "value": data["blog_url"],
                 "description": "BLOG"
+            })
+        if "linkedin_url" in data and data["linkedin_url"]:
+            data["urls"].append({
+                "value": data["linkedin_url"],
+                "description": "LINKEDIN"
             })
         data["ids"] = []
         if "orcid" in data and data["orcid"]:
@@ -114,7 +123,26 @@ def convert_data_to_model():
                     "rank": position["rank"] if position["rank"] != "rank" else ""
                 })
             del data["institution_history"]
-        obj.log.info(str(data))
+        data["phd_advisors"] = []
+        if "advisors" in data and data["advisors"]:
+            for advisor in data["advisors"]:
+                if advisor["degree_type"] == "PhD" and not advisor["full_name"]:
+                    continue
+                data["phd_advisors"].append({
+                    "name": advisor["full_name"],
+                    "degree_type": advisor["degree_type"]
+                })
+
+
+        # Add comments to extra data
+        if "comments" in data and data["comments"]:
+            obj.extra_data["comments"] = data["comments"]
+
+        # Add HEPNAMES collection
+        data["collections"] = {
+            "primary": "HEPNAMES"
+        }
+
 
     return _convert_data_to_model
 

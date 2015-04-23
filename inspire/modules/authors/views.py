@@ -25,7 +25,9 @@ from werkzeug.datastructures import MultiDict
 from flask_login import login_required
 
 from invenio.base.decorators import wash_arguments
+from invenio.ext.principal import permission_required
 from invenio.modules.records.api import Record
+from invenio.modules.workflows.models import BibWorkflowObject
 
 from .forms import AuthorUpdateForm
 
@@ -139,6 +141,45 @@ def new(aid):
     }
 
     return render_template('authors/new_form.html', form=form, **ctx)
+
+
+@blueprint.route('/newreview', methods=['GET', 'POST'])
+@login_required
+@permission_required("authorreview")
+@wash_arguments({'objectid': (int, 0)})
+def newreview(objectid):
+    """View for INSPIRE author new form review by a cataloger."""
+    if not objectid:
+        abort(400)
+    workflow_object = BibWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+
+    form = AuthorUpdateForm(data=extra_data["formdata"])
+    ctx = {
+        "action": url_for('.reviewaccepted', objectid=objectid),
+        "name": "authorUpdateForm",
+        "id": "authorUpdateForm",
+    }
+
+    return render_template('authors/new_form.html', form=form, **ctx)
+
+
+@blueprint.route('/reviewaccepted', methods=['POST'])
+@login_required
+@permission_required("authorreview")
+@wash_arguments({'objectid': (int, 0)})
+def reviewaccepted(objectid):
+    """Form handler when a cataloger accepts a new author update"""
+    if not objectid:
+        abort(400)
+    workflow_object = BibWorkflowObject.query.get(objectid)
+    extra_data = workflow_object.get_extra_data()
+    extra_data["approved"] = True
+    workflow_object.set_extra_data(extra_data)
+    workflow_object.save()
+    workflow_object.continue_workflow(delayed=True)
+
+    return render_template('authors/new_author_review_accepted.html')
 
 
 @blueprint.route('/submitupdate', methods=['POST'])

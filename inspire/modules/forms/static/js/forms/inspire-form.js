@@ -832,6 +832,15 @@ define(function(require, exports, module) {
   }
 
   /**
+   * Disable sorting in DynamicFields
+   */
+  this.disableSorting = function(ev, data) {
+    $(".ui-disable-sort").each(function() {
+      $(this).sortable("disable");
+    })
+  }
+
+  /**
      * Disable form submit on ENTER
      */
   this.preventFormSubmit = function(ev, data) {
@@ -888,6 +897,7 @@ define(function(require, exports, module) {
 
     this.init_autocomplete('[data-autocomplete]', this.attr.save_url, this.attr.autocomplete_url);
     this.init_field_lists(this.attr.formSelector + ' .dynamic-field-list', this.attr.save_url, '[data-autocomplete]', this.attr.autocomplete_url);
+    this.disableSorting();
     init_ckeditor(this.attr.formSelector + ' textarea[data-ckeditor="1"]', this.attr.save_url);
 
     // focus on the first element of the form
