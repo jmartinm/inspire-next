@@ -25,6 +25,7 @@
 
 {% block settings_body %}
 {{ helpers.panel_start('Profile', icon='fa fa-user fa-fw') }}
+{{ flashed_messages() }}
 {% if user.note == "2" and verification_form %}
 <form method="POST" role="form">
 {{ verification_form.csrf_token }}
@@ -50,7 +51,9 @@
   <div class="col-sm-11 col-md-11">
     <form method="POST" role="form">
       {%- for field in profile_form -%}
-        {{ render_field(field) }}
+        {% if field.name != "profile-nickname" %}
+          {{ render_field(field) }}
+        {% endif %}
       {%- endfor -%}
       <div class="form-actions">
         <button type="submit" name="submit" value="profile" class="btn btn-success"><i class="fa fa-check"></i> {{ _("Update Profile") }}</button>
