@@ -41,9 +41,7 @@ def authors(self, key, value):
                 'INSPIRE_id': value.get('i'),
                 'external_id': value.get('j'),
                 'e_mail': value.get('m'),
-                'affiliation': utils.force_list(
-                    value.get('u')
-                ),
+                'affiliation': utils.force_list(value.get('u')),
             }
 
     authors = self.get('authors', [])

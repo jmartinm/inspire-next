@@ -1,0 +1,671 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import datafield_open, datafield_close, render_controlfield, subfield -%}
+
+{%- macro references(value) -%}
+    {%- for references in value %}
+        {{ datafield_open('999', 'C', '5') }}
+        {%- if references.recid %}
+            {{ subfield('0', references.recid) }}
+        {% endif -%}
+        {%- if references.texkey %}
+            {{ subfield('1', references.texkey) }}
+        {% endif -%}
+        {%- if references.doi %}
+            {{ subfield('a', references.doi) }}
+        {% endif -%}
+        {%- if references.collaboration %}
+            {{ subfield('c', references.collaboration) }}
+        {% endif -%}
+        {%- if references.editors %}
+            {{ subfield('e', references.editors) }}
+        {% endif -%}
+        {%- if references.authors %}
+            {{ subfield('h', references.authors) }}
+        {% endif -%}
+        {%- if references.misc %}
+            {{ subfield('m', references.misc) }}
+        {% endif -%}
+        {%- if references.number %}
+            {{ subfield('o', references.number) }}
+        {% endif -%}
+        {%- if references.isbn %}
+            {{ subfield('i', references.isbn) }}
+        {% endif -%}
+        {%- if references.publisher %}
+            {{ subfield('p', references.publisher) }}
+        {% endif -%}
+        {%- if references.maintitle %}
+            {{ subfield('q', references.maintitle) }}
+        {% endif -%}
+        {%- if references.report_number %}
+            {{ subfield('r', references.report_number) }}
+        {% endif -%}
+        {%- if references.title %}
+            {{ subfield('t', references.title) }}
+        {% endif -%}
+        {%- if references.url %}
+            {{ subfield('u', references.url) }}
+        {% endif -%}
+        {%- if references.journal_pubnote %}
+            {{ subfield('s', references.journal_pubnote) }}
+        {% endif -%}
+        {%- if references.raw_reference %}
+            {{ subfield('x', references.raw_reference) }}
+        {% endif -%}
+        {%- if references.year %}
+            {{ subfield('y', references.year) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro refextract(value) -%}
+    {%- for refextract in value %}
+        {{ datafield_open('999', 'C', '6') }}
+        {%- if refextract.comment %}
+            {{ subfield('c', refextract.comment) }}
+        {% endif -%}
+        {%- if refextract.time %}
+            {{ subfield('t', refextract.time) }}
+        {% endif -%}
+        {%- if refextract.version %}
+            {{ subfield('v', refextract.version) }}
+        {% endif -%}
+        {%- if refextract.source %}
+            {{ subfield('s', refextract.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro isbn(value) -%}
+    {%- for isbn in value %}
+        {{ datafield_open('020') }}
+        {%- if isbn.isbn %}
+            {{ subfield('a', isbn.isbn) }}
+        {% endif -%}
+        {%- if isbn.medium %}
+            {{ subfield('b', isbn.medium) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro doi(value) -%}
+    {%- for doi in value %}
+        {{ datafield_open('024') }}
+        {%- if doi.doi %}
+            {{ subfield('a', doi.doi) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro system_control_number(value) -%}
+    {%- for system_control_number in value %}
+        {{ datafield_open('035') }}
+        {%- if system_control_number.system_control_number %}
+            {{ subfield('a', system_control_number.system_control_number) }}
+        {% endif -%}
+        {%- if system_control_number.institute %}
+            {{ subfield('9', system_control_number.institute) }}
+        {% endif -%}
+        {%- if system_control_number.obsolete %}
+            {{ subfield('z', system_control_number.obsolete) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro report_number(value) -%}
+    {%- for report_number in value %}
+        {{ datafield_open('037') }}
+        {%- if report_number.primary %}
+            {{ subfield('a', report_number.primary) }}
+        {% endif -%}
+        {%- if report_number.arxiv_category %}
+            {{ subfield('c', report_number.arxiv_category) }}
+        {% endif -%}
+        {%- if report_number.source %}
+            {{ subfield('g', report_number.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro language(value) -%}
+    {%- for language in value %}
+        {{ datafield_open('041') }}
+        {%- if language.language %}
+            {{ subfield('a', language.language) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro classification_number(value) -%}
+    {%- for classification_number in value %}
+        {{ datafield_open('084') }}
+        {%- if classification_number.classification_number %}
+            {{ subfield('a', classification_number.classification_number) }}
+        {% endif -%}
+        {%- if classification_number.standard %}
+            {{ subfield('2', classification_number.standard) }}
+        {% endif -%}
+        {%- if classification_number.source %}
+            {{ subfield('9', classification_number.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro authors(value) -%}
+    {%- for authors in value %}
+        {%- if loop.first -%}
+            {{ datafield_open('100') }}
+        {%- else -%}
+            {{ datafield_open('700') }}
+        {% endif -%}
+
+        {%- if authors.full_name %}
+            {{ subfield('a', authors.full_name) }}
+        {% endif -%}
+        {%- if authors.relator_term %}
+            {{ subfield('e', authors.relator_term) }}
+        {% endif -%}
+        {%- if authors.alternative_name %}
+            {{ subfield('q', authors.alternative_name) }}
+        {% endif -%}
+        {%- if authors.INSPIRE_id %}
+            {{ subfield('i', authors.INSPIRE_id) }}
+        {% endif -%}
+        {%- if authors.external_id %}
+            {{ subfield('j', authors.external_id) }}
+        {% endif -%}
+        {%- if authors.e_mail %}
+            {{ subfield('m', authors.e_mail) }}
+        {% endif -%}
+        {%- if authors.e_mail %}
+            {{ subfield('m', authors.e_mail) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro corporate_author(value) -%}
+    {{ datafield_open('110') }}
+    {%- if corporate_author.corporate_author %}
+        {{ subfield('a', corporate_author.corporate_author) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro institution(value) -%}
+    {{ datafield_open('110') }}
+    {%- if institution.name %}
+        {{ subfield('a', institution.name) }}
+    {% endif -%}
+    {%- if institution.department %}
+        {{ subfield('b', institution.department) }}
+    {% endif -%}
+    {%- if institution.new_name %}
+        {{ subfield('t', institution.new_name) }}
+    {% endif -%}
+    {%- if institution.affiliation %}
+        {{ subfield('u', institution.affiliation) }}
+    {% endif -%}
+    {%- if institution.obsolete_icn %}
+        {{ subfield('x', institution.obsolete_icn) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro title_variation(value) -%}
+    {%- for title_variation in value %}
+        {{ datafield_open('210') }}
+        {%- if title_variation.title_variation %}
+            {{ subfield('a', title_variation.title_variation) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro title_translation(value) -%}
+    {%- for title_translation in value %}
+        {{ datafield_open('242') }}
+        {%- if title_translation.title_translation %}
+            {{ subfield('a', title_translation.title_translation) }}
+        {% endif -%}
+        {%- if title_translation.subtitle %}
+            {{ subfield('b', title_translation.subtitle) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro title(value) -%}
+    {{ datafield_open('245') }}
+    {%- if title.title %}
+        {{ subfield('a', title.title) }}
+    {% endif -%}
+    {%- if title.subtitle %}
+        {{ subfield('b', title.subtitle) }}
+    {% endif -%}
+    {%- if title.source %}
+        {{ subfield('9', title.source) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro title_arxiv(value) -%}
+    {%- for title_arxiv in value %}
+        {{ datafield_open('246') }}
+        {%- if title_arxiv.title %}
+            {{ subfield('a', title_arxiv.title) }}
+        {% endif -%}
+        {%- if title_arxiv.subtitle %}
+            {{ subfield('b', title_arxiv.subtitle) }}
+        {% endif -%}
+        {%- if title_arxiv.source %}
+            {{ subfield('9', title_arxiv.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro title_old(value) -%}
+    {%- for title_old in value %}
+        {{ datafield_open('247') }}
+        {%- if title_old.title %}
+            {{ subfield('a', title_old.title) }}
+        {% endif -%}
+        {%- if title_old.subtitle %}
+            {{ subfield('b', title_old.subtitle) }}
+        {% endif -%}
+        {%- if title_old.source %}
+            {{ subfield('9', title_old.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro edition(value) -%}
+    {%- for edition in value %}
+        {{ datafield_open('250') }}
+        {%- if edition.edition %}
+            {{ subfield('a', edition.edition) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro imprint(value) -%}
+    {%- for imprint in value %}
+        {{ datafield_open('260') }}
+        {%- if imprint.place %}
+            {{ subfield('a', imprint.place) }}
+        {% endif -%}
+        {%- if imprint.publisher %}
+            {{ subfield('b', imprint.publisher) }}
+        {% endif -%}
+        {%- if imprint.date %}
+            {{ subfield('c', imprint.date) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro page_nr(value) -%}
+    {%- for page_nr in value %}
+        {{ datafield_open('300') }}
+        {%- if page_nr.value %}
+            {{ subfield('a', page_nr.value) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro book_series(value) -%}
+    {%- for book_series in value %}
+        {{ datafield_open('490') }}
+        {%- if book_series.value %}
+            {{ subfield('a', book_series.value) }}
+        {% endif -%}
+        {%- if book_series.volume %}
+            {{ subfield('v', book_series.volume) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro note(value) -%}
+    {%- for note in value %}
+        {{ datafield_open('500') }}
+        {%- if note.value %}
+            {{ subfield('a', note.value) }}
+        {% endif -%}
+        {%- if note.source %}
+            {{ subfield('9', note.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro hidden_note(value) -%}
+    {%- for hidden_note in value %}
+        {{ datafield_open('595') }}
+        {%- if hidden_note.value %}
+            {{ subfield('a', hidden_note.value) }}
+        {% endif -%}
+        {%- if hidden_note.cern_reference %}
+            {{ subfield('b', hidden_note.cern_reference) }}
+        {% endif -%}
+        {%- if hidden_note.cds %}
+            {{ subfield('c', hidden_note.cds) }}
+        {% endif -%}
+        {%- if hidden_note.source %}
+            {{ subfield('9', hidden_note.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro thesis(value) -%}
+    {%- for thesis in value %}
+        {{ datafield_open('502') }}
+        {%- if thesis.degree_type %}
+            {{ subfield('b', thesis.degree_type) }}
+        {% endif -%}
+        {%- if thesis.university %}
+            {{ subfield('c', thesis.university) }}
+        {% endif -%}
+        {%- if thesis.date %}
+            {{ subfield('d', thesis.date) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro abstract(value) -%}
+    {%- for abstract in value %}
+        {{ datafield_open('520') }}
+        {%- if abstract.summary %}
+            {{ subfield('a', abstract.summary) }}
+        {% endif -%}
+        {%- if abstract.hepdata_summary %}
+            {{ subfield('9', abstract.hepdata_summary) }}
+        {% endif -%}
+        {%- if abstract.source %}
+            {{ subfield('9', abstract.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro funding_info(value) -%}
+    {%- for funding_info in value %}
+        {{ datafield_open('536') }}
+        {%- if funding_info.agency %}
+            {{ subfield('a', funding_info.agency) }}
+        {% endif -%}
+        {%- if funding_info.grant_number %}
+            {{ subfield('c', funding_info.grant_number) }}
+        {% endif -%}
+        {%- if funding_info.project_number %}
+            {{ subfield('f', funding_info.project_number) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro license(value) -%}
+    {%- for license in value %}
+        {{ datafield_open('540') }}
+        {%- if license.license %}
+            {{ subfield('a', license.license) }}
+        {% endif -%}
+        {%- if license.imposing %}
+            {{ subfield('b', license.imposing) }}
+        {% endif -%}
+        {%- if license.url %}
+            {{ subfield('u', license.url) }}
+        {% endif -%}
+        {%- if license.material %}
+            {{ subfield('3', license.material) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro acquisition_source(value) -%}
+    {%- for acquisition_source in value %}
+        {{ datafield_open('541') }}
+        {%- if acquisition_source.source %}
+            {{ subfield('a', acquisition_source.source) }}
+        {% endif -%}
+        {%- if acquisition_source.email %}
+            {{ subfield('b', acquisition_source.email) }}
+        {% endif -%}
+        {%- if acquisition_source.method %}
+            {{ subfield('c', acquisition_source.method) }}
+        {% endif -%}
+        {%- if acquisition_source.date %}
+            {{ subfield('d', acquisition_source.date) }}
+        {% endif -%}
+        {%- if acquisition_source.submission_number %}
+            {{ subfield('e', acquisition_source.submission_number) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro copyright(value) -%}
+    {%- for copyright in value %}
+        {{ datafield_open('542') }}
+        {%- if copyright.material %}
+            {{ subfield('3', copyright.material) }}
+        {% endif -%}
+        {%- if copyright.holder %}
+            {{ subfield('d', copyright.holder) }}
+        {% endif -%}
+        {%- if copyright.statement %}
+            {{ subfield('f', copyright.statement) }}
+        {% endif -%}
+        {%- if copyright.url %}
+            {{ subfield('u', copyright.url) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro subject_term(value) -%}
+    {%- for subject_term in value %}
+        {{ datafield_open('650', '1', '7') }}
+        {%- if subject_term.value %}
+            {{ subfield('a', subject_term.value) }}
+        {% endif -%}
+        {%- if subject_term.scheme %}
+            {{ subfield('2', subject_term.scheme) }}
+        {% endif -%}
+        {%- if subject_term.source %}
+            {{ subfield('9', subject_term.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro free_keyword(value) -%}
+    {%- for free_keyword in value %}
+        {{ datafield_open('653') }}
+        {%- if free_keyword.value %}
+            {{ subfield('a', free_keyword.value) }}
+        {% endif -%}
+        {%- if free_keyword.source %}
+            {{ subfield('9', free_keyword.source) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro accelerator_experiment(value) -%}
+    {%- for accelerator_experiment in value %}
+        {{ datafield_open('693') }}
+        {%- if accelerator_experiment.accelerator %}
+            {{ subfield('a', accelerator_experiment.accelerator) }}
+        {% endif -%}
+        {%- if accelerator_experiment.experiment %}
+            {{ subfield('e', accelerator_experiment.experiment) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro thesaurus_terms(value) -%}
+    {%- for thesaurus_terms in value %}
+        {{ datafield_open('695') }}
+        {%- if thesaurus_terms.keyword %}
+            {{ subfield('a', thesaurus_terms.keyword) }}
+        {% endif -%}
+        {%- if thesaurus_terms.energy_range %}
+            {{ subfield('e', thesaurus_terms.energy_range) }}
+        {% endif -%}
+        {%- if thesaurus_terms.classification_scheme %}
+            {{ subfield('2', thesaurus_terms.classification_scheme) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro thesis_supervisor(value) -%}
+    {%- for thesis_supervisor in value %}
+        {{ datafield_open('701') }}
+        {%- if thesis_supervisor.full_name %}
+            {{ subfield('a', thesis_supervisor.full_name) }}
+        {% endif -%}
+        {%- if thesis_supervisor.INSPIRE_id %}
+            {{ subfield('g', thesis_supervisor.INSPIRE_id) }}
+        {% endif -%}
+        {%- if thesis_supervisor.external_id %}
+            {{ subfield('j', thesis_supervisor.external_id) }}
+        {% endif -%}
+        {%- if thesis_supervisor.affiliation %}
+            {{ subfield('u', thesis_supervisor.affiliation) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro collaboration(value) -%}
+    {%- for collaboration in value %}
+        {{ datafield_open('710') }}
+        {%- if collaboration.collaboration %}
+            {{ subfield('g', collaboration.collaboration) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro publication_info(value) -%}
+    {%- for publication_info in value %}
+        {{ datafield_open('773') }}
+        {%- if publication_info.recid %}
+            {{ subfield('0', publication_info.recid) }}
+        {% endif -%}
+        {%- if publication_info.page_artid %}
+            {{ subfield('c', publication_info.page_artid) }}
+        {% endif -%}
+        {%- if publication_info.journal_issue %}
+            {{ subfield('n', publication_info.journal_issue) }}
+        {% endif -%}
+        {%- if publication_info.conf_acronym %}
+            {{ subfield('o', publication_info.conf_acronym) }}
+        {% endif -%}
+        {%- if publication_info.journal_title %}
+            {{ subfield('p', publication_info.journal_title) }}
+        {% endif -%}
+        {%- if publication_info.reportnumber %}
+            {{ subfield('r', publication_info.reportnumber) }}
+        {% endif -%}
+        {%- if publication_info.confpaper_info %}
+            {{ subfield('t', publication_info.confpaper_info) }}
+        {% endif -%}
+        {%- if publication_info.journal_volume %}
+            {{ subfield('v', publication_info.journal_volume) }}
+        {% endif -%}
+        {%- if publication_info.cnum %}
+            {{ subfield('w', publication_info.cnum) }}
+        {% endif -%}
+        {%- if publication_info.pubinfo_freetext %}
+            {{ subfield('x', publication_info.pubinfo_freetext) }}
+        {% endif -%}
+        {%- if publication_info.year %}
+            {{ subfield('y', publication_info.year) }}
+        {% endif -%}
+        {%- if publication_info.isbn %}
+            {{ subfield('z', publication_info.isbn) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro succeeding_entry(value) -%}
+    {%- for succeeding_entry in value %}
+        {{ datafield_open('785') }}
+        {%- if succeeding_entry.relationship_code %}
+            {{ subfield('r', succeeding_entry.relationship_code) }}
+        {% endif -%}
+        {%- if succeeding_entry.recid %}
+            {{ subfield('w', succeeding_entry.recid) }}
+        {% endif -%}
+        {%- if succeeding_entry.isbn %}
+            {{ subfield('z', succeeding_entry.isbn) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro url(value) -%}
+    {%- for url in value %}
+        {{ datafield_open('856', '4') }}
+        {%- if url.url %}
+            {{ subfield('u', url.url) }}
+        {% endif -%}
+        {%- if url.doc_string %}
+            {{ subfield('w', url.doc_string) }}
+        {% endif -%}
+        {%- if url.description %}
+            {{ subfield('y', url.description) }}
+        {% endif -%}
+        {%- if url.material_type %}
+            {{ subfield('3', url.material_type) }}
+        {% endif -%}
+        {%- if url.comment %}
+            {{ subfield('z', url.comment) }}
+        {% endif -%}
+        {%- if url.name %}
+            {{ subfield('f', url.name) }}
+        {% endif -%}
+        {%- if url.size %}
+            {{ subfield('s', url.size) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}

@@ -1,0 +1,111 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import datafield_open, datafield_close, render_controlfield, subfield -%}
+
+
+{%- macro location(value) -%}
+    {{ datafield_open('034') }}
+    {%- if location.longitude %}
+        {{ subfield('d', location.longitude) }}
+    {% endif -%}
+    {%- if location.latitude %}
+        {{ subfield('f', location.latitude) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro timezone(value) -%}
+    {{ datafield_open('043') }}
+    {{ subfield('t', value) }}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro name(value) -%}
+    {%- for name in value %}
+        {{ datafield_open('110') }}
+            {{ subfield('a', value) }}
+        {{ datafield_close() }}
+    {%- endfor %}
+{%- endmacro -%}
+
+{%- macro institution(value) -%}
+    {{ datafield_open('110') }}
+    {%- if institution.name %}
+        {{ subfield('a', institution.name) }}
+    {% endif -%}
+    {%- if institution.department %}
+        {{ subfield('b', institution.department) }}
+    {% endif -%}
+    {%- if institution.new_name %}
+        {{ subfield('t', institution.new_name) }}
+    {% endif -%}
+    {%- if institution.affiliation %}
+        {{ subfield('u', institution.affiliation) }}
+    {% endif -%}
+    {%- if institution.obsolete_icn %}
+        {{ subfield('x', institution.obsolete_icn) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro address(value) -%}
+    {%- for address in value %}
+        {{ datafield_open('371') }}
+        {%- if address.address %}
+            {{ subfield('a', address.address) }}
+        {% endif -%}
+        {%- if address.city %}
+            {{ subfield('b', address.city) }}
+        {% endif -%}
+        {%- if address.state %}
+            {{ subfield('c', address.state) }}
+        {% endif -%}
+        {%- if address.country %}
+            {{ subfield('d', address.country) }}
+        {% endif -%}
+        {%- if address.postal_code %}
+            {{ subfield('e', address.postal_code) }}
+        {% endif -%}
+        {%- if address.country_code %}
+            {{ subfield('g', address.country_code) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro activity(value) -%}
+    {{ datafield_open('372') }}
+    {{ subfield('a', value) }}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro name_variants(value) -%}
+    {%- for name_variants in value %}
+        {{ datafield_open('410') }}
+        {{ subfield('a', value) }}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro core(value) -%}
+    {{ datafield_open('690', 'C') }}
+    {{ subfield('a', value) }}
+    {{ datafield_close() }}
+{%- endmacro -%}

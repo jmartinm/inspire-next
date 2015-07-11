@@ -1,0 +1,75 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import controlfield -%}
+{%- from "export/macros/common.xml" import url, oai_pmh, creation_modification_date, spires_sysno, collections, deleted_recid -%}
+{%- from "export/macros/institutions.xml" import location, timezone, name, institution, address, activity, name_variants, core -%}
+
+<record>
+{% if record.control_number -%}
+    {{controlfield(tag="001", value=record.control_number)}}
+{% endif -%}
+{%- if record.agency_code -%}
+    {{controlfield(tag="003", value=record.agency_code)}}
+{%- endif -%}
+{%- if record.date_and_time_of_latest_transaction -%}
+    {{controlfield(tag="005", value=record.date_and_time_of_latest_transaction)}}
+{%- endif -%}
+{%- if record.oai_pmh -%}
+    {{oai_pmh(value=record.oai_pmh)}}
+{%- endif -%}
+{%- if record.creation_modification_date -%}
+    {{creation_modification_date(value=record.creation_modification_date)}}
+{%- endif -%}
+{%- if record.spires_sysno -%}
+    {{spires_sysno(value=record.spires_sysno)}}
+{%- endif -%}
+{%- if record.collections -%}
+    {{collections(value=record.collections)}}
+{%- endif -%}
+{%- if record.deleted_recid -%}
+    {{deleted_recid(value=record.deleted_recid)}}
+{% endif %}
+{%- if record.location -%}
+    {{location(value=record.location)}}
+{%- endif -%}
+{%- if record.timezone -%}
+    {{timezone(value=record.timezone)}}
+{%- endif -%}
+{%- if record.name -%}
+    {{name(value=record.name)}}
+{%- endif -%}
+{%- if record.institution -%}
+    {{institution(value=record.institution)}}
+{%- endif -%}
+{%- if record.address -%}
+    {{address(value=record.address)}}
+{%- endif -%}
+{%- if record.activity -%}
+    {{activity(value=record.activity)}}
+{%- endif -%}
+{%- if record.name_variants -%}
+    {{name_variants(value=record.name_variants)}}
+{%- endif -%}
+{%- if record.core -%}
+    {{core(value=record.core)}}
+{%- endif -%}
+
+
+</record>

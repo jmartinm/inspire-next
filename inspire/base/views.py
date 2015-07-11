@@ -113,3 +113,13 @@ Feedback:
         return json.dumps(
             {'success': False}
             ), 500, {'ContentType': 'application/json'}
+
+
+#
+# Jinja2 filters
+#
+
+@blueprint.app_template_filter('marcxml')
+def marcxml_filter(record):
+    from flask import render_template
+    return render_template("export/hep.xml", record=record)

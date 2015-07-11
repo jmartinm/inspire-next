@@ -1,0 +1,161 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import controlfield -%}
+{%- from "export/macros/common.xml" import url, oai_pmh, creation_modification_date, spires_sysno, collections, deleted_recid -%}
+{%- from "export/macros/hep.xml" import references, refextract, isbn, doi, system_control_number, report_number, language, classification_number, authors, corporate_author, institution, title_variation, title_translation, title, title_arxiv, title_old, edition, imprint, page_nr, book_series, note, hidden_note, thesis, abstract, funding_info, license, acquisition_source, copyright, subject_term, free_keyword, accelerator_experiment, thesaurus_terms, thesis_supervisor, collaboration, publication_info, succeeding_entry, url -%}
+
+<record>
+{% if record.control_number -%}
+    {{controlfield(tag="001", value=record.control_number)}}
+{% endif -%}
+{%- if record.agency_code -%}
+    {{controlfield(tag="003", value=record.agency_code)}}
+{%- endif -%}
+{%- if record.date_and_time_of_latest_transaction -%}
+    {{controlfield(tag="005", value=record.date_and_time_of_latest_transaction)}}
+{%- endif -%}
+{%- if record.oai_pmh -%}
+    {{oai_pmh(value=record.oai_pmh)}}
+{%- endif -%}
+{%- if record.creation_modification_date -%}
+    {{creation_modification_date(value=record.creation_modification_date)}}
+{%- endif -%}
+{%- if record.spires_sysno -%}
+    {{spires_sysno(value=record.spires_sysno)}}
+{%- endif -%}
+{%- if record.collections -%}
+    {{collections(value=record.collections)}}
+{%- endif -%}
+{%- if record.deleted_recid -%}
+    {{deleted_recid(value=record.deleted_recid)}}
+{% endif %}
+{%- if record.references -%}
+    {{references(value=record.references)}}
+{%- endif -%}
+{%- if record.refextract -%}
+    {{refextract(value=record.refextract)}}
+{%- endif -%}
+{%- if record.isbn -%}
+    {{isbn(value=record.isbn)}}
+{%- endif -%}
+{%- if record.doi -%}
+    {{doi(value=record.doi)}}
+{%- endif -%}
+{%- if record.system_control_number -%}
+    {{system_control_number(value=record.system_control_number)}}
+{%- endif -%}
+{%- if record.report_number -%}
+    {{report_number(value=record.report_number)}}
+{%- endif -%}
+{%- if record.language -%}
+    {{language(value=record.language)}}
+{%- endif -%}
+{%- if record.classification_number -%}
+    {{classification_number(value=record.classification_number)}}
+{%- endif -%}
+{%- if record.authors -%}
+    {{authors(value=record.authors)}}
+{%- endif -%}
+{%- if record.corporate_author -%}
+    {{corporate_author(value=record.corporate_author)}}
+{%- endif -%}
+{%- if record.institution -%}
+    {{institution(value=record.institution)}}
+{%- endif -%}
+{%- if record.title_variation -%}
+    {{title_variation(value=record.title_variation)}}
+{%- endif -%}
+{%- if record.title_translation -%}
+    {{title_translation(value=record.title_translation)}}
+{%- endif -%}
+{%- if record.title -%}
+    {{title(value=record.title)}}
+{%- endif -%}
+{%- if record.title_arxiv -%}
+    {{title_arxiv(value=record.title_arxiv)}}
+{%- endif -%}
+{%- if record.title_old -%}
+    {{title_old(value=record.title_old)}}
+{%- endif -%}
+{%- if record.edition -%}
+    {{edition(value=record.edition)}}
+{%- endif -%}
+{%- if record.imprint -%}
+    {{imprint(value=record.imprint)}}
+{%- endif -%}
+{%- if record.page_nr -%}
+    {{page_nr(value=record.page_nr)}}
+{%- endif -%}
+{%- if record.book_series -%}
+    {{book_series(value=record.book_series)}}
+{%- endif -%}
+{%- if record.note -%}
+    {{note(value=record.note)}}
+{%- endif -%}
+{%- if record.hidden_note -%}
+    {{hidden_note(value=record.hidden_note)}}
+{%- endif -%}
+{%- if record.thesis -%}
+    {{thesis(value=record.thesis)}}
+{%- endif -%}
+{%- if record.abstract -%}
+    {{abstract(value=record.abstract)}}
+{%- endif -%}
+{%- if record.funding_info -%}
+    {{funding_info(value=record.funding_info)}}
+{%- endif -%}
+{%- if record.license -%}
+    {{license(value=record.license)}}
+{%- endif -%}
+{%- if record.acquisition_source -%}
+    {{acquisition_source(value=record.acquisition_source)}}
+{%- endif -%}
+{%- if record.copyright -%}
+    {{copyright(value=record.copyright)}}
+{%- endif -%}
+{%- if record.subject_term -%}
+    {{subject_term(value=record.subject_term)}}
+{%- endif -%}
+{%- if record.free_keyword -%}
+    {{free_keyword(value=record.free_keyword)}}
+{%- endif -%}
+{%- if record.accelerator_experiment -%}
+    {{accelerator_experiment(value=record.accelerator_experiment)}}
+{%- endif -%}
+{%- if record.thesaurus_terms -%}
+    {{thesaurus_terms(value=record.thesaurus_terms)}}
+{%- endif -%}
+{%- if record.thesis_supervisor -%}
+    {{thesis_supervisor(value=record.thesis_supervisor)}}
+{%- endif -%}
+{%- if record.collaboration -%}
+    {{collaboration(value=record.collaboration)}}
+{%- endif -%}
+{%- if record.publication_info -%}
+    {{publication_info(value=record.publication_info)}}
+{%- endif -%}
+{%- if record.succeeding_entry -%}
+    {{succeeding_entry(value=record.succeeding_entry)}}
+{%- endif -%}
+{%- if record.url -%}
+    {{url(value=record.url)}}
+{%- endif -%}
+
+</record>

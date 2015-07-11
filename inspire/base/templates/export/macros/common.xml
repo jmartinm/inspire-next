@@ -1,0 +1,113 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import datafield_open, datafield_close, render_controlfield, subfield -%}
+
+{%- macro url(value) -%}
+    {%- for url in value %}
+        {{ datafield_open('856', '4') }}
+        {%- if url.url %}
+            {{ subfield('u', url.url) }}
+        {% endif %}
+        {%- if url.doc_string %}
+            {{ subfield('w', url.doc_string) }}
+        {% endif %}
+        {%- if url.description %}
+            {{ subfield('y', url.description) }}
+        {% endif %}
+        {%- if url.material_type %}
+            {{ subfield('3', url.material_type) }}
+        {% endif %}
+        {%- if url.comment %}
+            {{ subfield('z', url.comment) }}
+        {% endif %}
+        {%- if url.name %}
+            {{ subfield('f', url.name) }}
+        {% endif %}
+        {%- if url.size %}
+            {{ subfield('s', url.size) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro oai_pmh(value) -%}
+    {%- for oai_pmh in value %}
+        {{ datafield_open('909', 'C', '0') }}
+        {%- if oai_pmh.id %}
+            {{ subfield('o', oai_pmh.id) }}
+        {% endif %}
+        {%- if oai_pmh.set %}
+            {{ subfield('p', oai_pmh.set) }}
+        {% endif %}
+        {%- if oai_pmh.previous_set %}
+            {{ subfield('q', oai_pmh.previous_set) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro creation_modification_date(value) -%}
+    {%- for creation_modification_date in value %}
+        {{ datafield_open('961') }}
+        {%- if creation_modification_date.modification_date %}
+            {{ subfield('c', creation_modification_date.modification_date) }}
+        {% endif %}
+        {%- if creation_modification_date.creation_date %}
+            {{ subfield('x', creation_modification_date.creation_date) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro spires_sysno(value) -%}
+    {%- for spires_sysno in value %}
+        {{ datafield_open('970') }}
+        {%- if spires_sysno.spires_sysno %}
+            {{ subfield('a', spires_sysno.spires_sysno) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro collections(value) -%}
+    {%- for collections in value %}
+        {{ datafield_open('980') }}
+        {%- if collections.primary %}
+            {{ subfield('a', collections.primary) }}
+        {% endif %}
+        {%- if collections.secondary %}
+            {{ subfield('b', collections.secondary) }}
+        {% endif %}
+        {%- if collections.deleted %}
+            {{ subfield('c', collections.deleted) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro deleted_recid(value) -%}
+    {%- for deleted_recid in value %}
+        {{ datafield_open('981') }}
+        {%- if deleted_recid.deleted_recid %}
+            {{ subfield('a', deleted_recid.deleted_recid) }}
+        {% endif %}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}

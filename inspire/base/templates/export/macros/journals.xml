@@ -1,0 +1,60 @@
+{#
+## This file is part of INSPIRE.
+## Copyright (C) 2015 CERN.
+##
+## INSPIRE is free software; you can redistribute it and/or
+## modify it under the terms of the GNU General Public License as
+## published by the Free Software Foundation; either version 2 of the
+## License, or (at your option) any later version.
+##
+## INSPIRE is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with INSPIRE; if not, write to the Free Software Foundation, Inc.,
+## 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#}
+
+{%- from "export/macros/base.xml" import datafield_open, datafield_close, render_controlfield, subfield -%}
+
+
+{%- macro issn(value) -%}
+    {{ datafield_open('022') }}
+    {{ subfield('a', value) }}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro coden(value) -%}
+    {{ datafield_open('030') }}
+    {{ subfield('a', value) }}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro title(value) -%}
+    {{ datafield_open('130') }}
+    {%- if title.title %}
+        {{ subfield('a', title.title) }}
+    {% endif -%}
+    {{ datafield_close() }}
+{%- endmacro -%}
+
+{%- macro short_title(value) -%}
+    {%- for short_title in value %}
+        {{ datafield_open('711') }}
+        {%- if short_title.short_title %}
+            {{ subfield('a', short_title.short_title) }}
+        {% endif -%}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro name_variants(value) -%}
+    {%- for name_variants in value %}
+        {{ datafield_open('730') }}
+        {{ subfield('a', value) }}
+        {{ datafield_close() }}
+    {%- endfor -%}
+{%- endmacro -%}
+
