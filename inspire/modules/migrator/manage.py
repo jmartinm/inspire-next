@@ -30,6 +30,7 @@ import sys
 from flask import current_app
 from flask.ext.script import prompt_bool
 
+from invenio_ext.es import es
 from invenio_ext.es import create_index as create_main_index
 from invenio_ext.es import delete_index as delete_main_index
 from invenio_ext.script import Manager
@@ -150,6 +151,29 @@ def create_index():
     """
     create_main_index('banana')
     create_holdingpen_index('banana')
+
+
+@manager.command
+def create_indices():
+    """Create or recreate the indices for records and holdingpen."""
+    import json
+
+    from invenio.base.globals import cfg
+    from invenio_search.registry import mappings
+
+    # Create all main indices for records and Holding Pen
+    indices = set(cfg["SEARCH_ELASTIC_COLLECTION_INDEX_MAPPING"].values())
+    indices.add(cfg['SEARCH_ELASTIC_DEFAULT_INDEX'])
+    # Add the Holding Pen index
+    indices.update(cfg['WORKFLOWS_HOLDING_PEN_INDICES'])
+    for index in indices:
+        mapping = {}
+        mapping_filename = index + ".json"
+        if mapping_filename in mappings:
+            mapping = json.load(open(mappings[mapping_filename], "r"))
+        es.indices.delete(index=index, ignore=404)
+        es.indices.create(index=index + "_v1", body=mapping)
+        es.indices.put_alias(index=index + "_v1", name=index)
 
 
 @manager.command
