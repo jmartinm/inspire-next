@@ -22,10 +22,64 @@
 
 """Manage migration from INSPIRE legacy instance."""
 
+from __future__ import absolute_import
+
 from invenio_celery import celery
 
 
 @celery.task
-def migrate(url, **kwargs):
+def migrate(source, **kwargs):
     """Main migration function."""
-    pass
+    from dojson.contrib.marc21.utils import split_blob
+    for data in split_blob(open(source).read()):
+        create_record.delay(data, force=True)
+
+
+@celery.task
+def create_record(data, force=False):
+    from invenio_ext.sqlalchemy import db
+    from invenio_records.api import Record as record_api
+    from invenio_records.models import Record
+
+    from inspire.dojson.hep import hep
+    from inspire.dojson.institutions import institutions
+    from inspire.dojson.journals import journals
+    from inspire.dojson.experiments import experiments
+    from inspire.dojson.hepnames import hepnames
+    from inspire.dojson.jobs import jobs
+    from inspire.dojson.conferences import conferences
+    from inspire.dojson.processors import _collection_in_record
+
+    from dojson.contrib.marc21.utils import create_record
+
+    record = create_record(data)
+    if _collection_in_record(record, 'institution'):
+        json = institutions.do(record)
+    elif _collection_in_record(record, 'experiment'):
+        json = experiments.do(record)
+    elif _collection_in_record(record, 'journals'):
+        json = journals.do(record)
+    elif _collection_in_record(record, 'hepnames'):
+        json = hepnames.do(record)
+    elif _collection_in_record(record, 'job') or \
+            _collection_in_record(record, 'jobhidden'):
+        json = jobs.do(record)
+    elif _collection_in_record(record, 'conferences'):
+        json = conferences.do(record)
+    else:
+        json = hep.do(record)
+
+    if force and any(key in json for key in ('control_number', 'recid')):
+        try:
+            control_number = json['control_number']
+        except KeyError:
+            control_number = json['recid']
+        control_number = int(control_number)
+        # Searches if record already exists.
+        record = Record.query.filter_by(id=control_number).first()
+        if record is None:
+            # Adds the record to the db.
+            rec = Record(id=control_number)
+            db.session.add(rec)
+        record_api.create(json)
+        db.session.commit()
