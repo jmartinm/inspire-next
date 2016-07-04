@@ -73,6 +73,7 @@ install_requires = [
     'Flask-Breadcrumbs>=0.3.0',
     'Flask-Script>=2.0.5',
     'Flask-CLI>=0.4.0',
+    'flask-shell-ipython>=0.1.1',
     'jsmin',
     'pytest-runner>=2.7.0',
     'workflow>=2.0.0',
