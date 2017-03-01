@@ -23,6 +23,7 @@
 from __future__ import absolute_import, division, print_function
 
 import copy
+import datetime
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -221,6 +222,7 @@ def formdata_to_model(obj, formdata):
     orcid = retrieve_orcid(obj.id_user)
 
     builder.add_acquisition_source(
+        date=datetime.datetime.utcnow().isoformat(),
         submission_number=obj.id,
         email=email,
         orcid=orcid,

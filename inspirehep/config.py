@@ -1461,7 +1461,7 @@ WORKFLOWS_UI_REST_SORT_OPTIONS = {
         },
         "mostrecent": {
             "title": 'Most recent',
-            "fields": ['_workflow.modified'],
+            "fields": ['metadata.acquisition_source.date'],
             "default_order": 'desc',
             "order": 2,
         },

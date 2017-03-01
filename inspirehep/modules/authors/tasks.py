@@ -23,9 +23,8 @@
 from __future__ import absolute_import, division, print_function
 
 import copy
+import datetime
 import os
-
-from datetime import date
 
 from flask import current_app, url_for
 
@@ -97,7 +96,7 @@ def formdata_to_model(obj, formdata):
         orcid = ''
     data['acquisition_source'] = dict(
         email=user_email,
-        date=date.today().isoformat(),
+        date=datetime.datetime.utcnow().isoformat(),
         method="submitter",
         orcid=orcid,
         submission_number=str(obj.id),
