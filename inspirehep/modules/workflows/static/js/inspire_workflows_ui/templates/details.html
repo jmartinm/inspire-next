@@ -372,6 +372,17 @@
         </div>
       </div>
 
+      <!--RT Panel-->
+      <div class="col-md-12">
+        <div class="detail-panel">
+          <h4>RT information</h4>
+
+          <div class="text-center" ng-if="vm.record._extra_data.ticket_id">
+            <p><a href="https://rt.inspirehep.net/Ticket/Display.html?id={{vm.record._extra_data.ticket_id}}" target="_new">See related ticket (#{{vm.record._extra_data.ticket_id}})</a></p>
+          </div>
+        </div>
+      </div>
+
       <!--Action Panel-->
       <div class="col-md-12">
         <div class="detail-panel">
