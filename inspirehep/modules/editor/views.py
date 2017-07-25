@@ -32,6 +32,9 @@ from flask import (
 )
 from flask_login import current_user, login_required
 
+from inspirehep.utils.record_getter import get_db_record
+from inspirehep.modules.pidstore.utils import get_pid_type_from_endpoint
+
 from ...utils import tickets
 
 from .permissions import editor_manage_tickets_permission
@@ -96,6 +99,26 @@ def get_rt_queues():
     """View to get all rt queues"""
 
     return jsonify(tickets.get_queues())
+
+
+@blueprint.route('/<endpoint>/<pid_value>/rebase', methods=['POST'])
+def rebase(endpoint, pid_value):
+    """Merge json with latest revision"""
+    json = request.json
+    pid_type = get_pid_type_from_endpoint(endpoint)
+    record = get_db_record(pid_type, pid_value)
+
+    # Merge record and json
+    # If no conflicts, return new JSON, last revision ID
+    # If conflicts, return conflicts dict
+
+    response = {
+        'merged_json': record.dumps(),
+        'revision_id': record.revision_id,
+        'conflicts': None
+    }
+
+    return jsonify(response)
 
 
 def _simplify_ticket_response(ticket):
