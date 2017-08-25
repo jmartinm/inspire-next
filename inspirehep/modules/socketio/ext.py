@@ -20,10 +20,25 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-web: gunicorn --worker-class eventlet -w 1 inspirehep.wsgi -c gunicorn.cfg
-cache: redis-server
-worker: celery worker -E -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --autoreload --pidfile="${VIRTUAL_ENV}/worker.pid" --purge
-workermon: celery flower -A inspirehep.celery
-# beat: celery beat -A inspirehep.celery --loglevel=INFO --workdir="${VIRTUAL_ENV}" --pidfile="${VIRTUAL_ENV}/worker_beat.pid"
-# mathoid: node_modules/mathoid/server.js -c mathoid.config.yaml
-indexer: elasticsearch -Dcluster.name="inspire" -Ddiscovery.zen.ping.multicast.enabled=false -Dpath.data="$VIRTUAL_ENV/var/data/elasticsearch"  -Dpath.logs="$VIRTUAL_ENV/var/log/elasticsearch"
+"""Initialization of Flask-SocketIO."""
+
+from __future__ import absolute_import, division, print_function
+
+from flask_socketio import SocketIO
+
+from .namespaces import MultiEditorNamespace
+
+
+class INSPIRESocketIO(object):
+    """INSPIRE SocketIO extension."""
+
+    def __init__(self, app=None, **kwargs):
+        """Extension initialization."""
+        if app:
+            self.init_app(app, **kwargs)
+
+    def init_app(self, app, **kwargs):
+        """Initialize application object."""
+        self.socketio = SocketIO(app, message_queue=app.config.get('BROKER_URL'))
+        self.socketio.on_namespace(MultiEditorNamespace('/multieditor'))
+        app.extensions['inspire-socketio'] = self
